@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_10_204636) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_10_222942) do
   create_table "artists", force: :cascade do |t|
     t.string "name", null: false
     t.string "profile"
@@ -19,13 +19,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_204636) do
   end
 
   create_table "artists_labels", id: false, force: :cascade do |t|
-    t.integer "artist_id", null: false
     t.integer "label_id", null: false
+    t.integer "artist_id", null: false
   end
 
   create_table "artists_releases", id: false, force: :cascade do |t|
-    t.integer "artist_id", null: false
     t.integer "release_id", null: false
+    t.integer "artist_id", null: false
   end
 
   create_table "genres", force: :cascade do |t|
@@ -60,6 +60,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_204636) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.string "session_id", null: false
+    t.text "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
   create_table "tracks", force: :cascade do |t|
     t.integer "position"
     t.string "title", null: false
@@ -80,6 +89,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_204636) do
     t.index ["release_id"], name: "index_videos_on_release_id"
   end
 
+  add_foreign_key "artists_labels", "artists", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "artists_labels", "labels", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "artists_releases", "artists", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "artists_releases", "releases", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "genres_releases", "genres", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "genres_releases", "releases", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "labels_releases", "labels", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "labels_releases", "releases", primary_key: "id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tracks", "releases"
   add_foreign_key "videos", "releases"
 end

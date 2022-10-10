@@ -7,5 +7,3 @@
 #   Character.create(name: "Luke", movie: movies.first)
 require "discogs"
 
-wrapper = Discogs::Wrapper.new("RRCAlbumCatalog")
-auth_wrapper = Discogs::Wrapper.new("RRCAlbumCatalog", user_token: "UVHUjZHYJrClanUtJWdzVCUHXvPdDpwppwPgSyWJ")
