@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @release %>
+
+<div>
+  <%= link_to "Edit this release", edit_release_path(@release) %> |
+  <%= link_to "Back to releases", releases_path %>
+
+  <%= button_to "Destroy this release", @release, method: :delete %>
+</div>
