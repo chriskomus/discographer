@@ -36,7 +36,8 @@ gem "figaro"
 
 gem "discogs-wrapper"
 
-gem "activerecord-session_store"
+gem 'activerecord-session_store'
+# gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
@@ -83,8 +84,4 @@ group :test do
   gem "webdrivers"
 end
 
-gem "oauth", "~> 0.5.14"
-
-gem "typhoeus", "~> 1.4"
-
-gem "hydra", "~> 0.24.0"
+gem "oauth"
