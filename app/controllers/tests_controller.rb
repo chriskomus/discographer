@@ -52,10 +52,12 @@ class TestsController < ApplicationController
   end
 
   def add_want
-    release_id = '2489281'
+    wrapper = Discogs::Wrapper.new('AlbumCatalog')
 
-    @user     = @discogs.get_identity
-    @response = @discogs.add_release_to_user_wantlist(@user.username, release_id)
+    @artist          = wrapper.get_artist("329937")
+    @artist_releases = wrapper.get_artist_releases("329937")
+    @release         = wrapper.get_release("1529724")
+    @label           = wrapper.get_label("29515")
   end
 
   def edit_want

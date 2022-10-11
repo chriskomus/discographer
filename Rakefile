@@ -4,3 +4,4 @@
 require_relative "config/application"
 
 Rails.application.load_tasks
+# DiscogsOauth::Application.load_tasks

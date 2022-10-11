@@ -1,14 +1,28 @@
-<p style="color: green"><%= notice %></p>
+<section class="page-section tile">
+  <div class="container">
+    <!-- Heading-->
+    <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Genres</h2>
+    <!-- Icon Divider-->
+    <div class="divider-custom">
+      <div class="divider-custom-line"></div>
+      <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+      <div class="divider-custom-line"></div>
+    </div>
+    <!-- About Section Button-->
+    <div class="text-center mt-4">
+      <%= link_to '<i class="fa-solid fa-plus"></i> New Genre'.html_safe, new_genre_path, class: "btn btn-xl btn-outline-primary" %>
+    </div>
 
-<h1>Genres</h1>
-
-<div id="genres">
-  <% @genres.each do |genre| %>
-    <%= render genre %>
-    <p>
-      <%= link_to "Show this genre", genre %>
-    </p>
-  <% end %>
-</div>
-
-<%= link_to "New genre", new_genre_path %>
+    <!-- Grid Items-->
+    <div class="row justify-content-center mt-5" id="genres">
+      <% @genres.each do |genre| %>
+        <div class="col-md-4 col-lg-2 mb-5">
+          <div class="tile-item mx-auto" data-bs-toggle="modal" data-bs-target="#modal<%= genre.id %>">
+            <%= link_to '<div class="tile-item-caption d-flex align-items-center justify-content-center h-100 w-100"><div class="tile-item-caption-content text-center text-white"><i class="fa-sharp fa-solid fa-eye"></i></div></div>'.html_safe, genre %>
+            <h3><%= genre.name %></h3>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
