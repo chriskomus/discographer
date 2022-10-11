@@ -105,6 +105,8 @@ GEM
       httparty (~> 0.14)
       oauth (~> 0.5.1)
     erubi (1.11.0)
+    ethon (0.15.0)
+      ffi (>= 1.15.0)
     execjs (2.8.1)
     ffi (1.15.5)
     figaro (1.2.0)
@@ -115,6 +117,7 @@ GEM
     httparty (0.20.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
+    hydra (0.24.0)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     importmap-rails (1.1.5)
@@ -249,6 +252,8 @@ GEM
       actionpack (>= 6.0.0)
       activejob (>= 6.0.0)
       railties (>= 6.0.0)
+    typhoeus (1.4.0)
+      ethon (>= 0.9.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.3.0)
@@ -280,9 +285,11 @@ DEPENDENCIES
   debug
   discogs-wrapper
   figaro
+  hydra (~> 0.24.0)
   importmap-rails
   jbuilder
   jquery-rails
+  oauth (~> 0.5.14)
   puma (~> 5.0)
   rails (~> 7.0.4)
   rubocop
@@ -292,6 +299,7 @@ DEPENDENCIES
   sqlite3 (~> 1.4)
   stimulus-rails
   turbo-rails
+  typhoeus (~> 1.4)
   tzinfo-data
   web-console
   webdrivers

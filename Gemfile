@@ -82,3 +82,9 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem "oauth", "~> 0.5.14"
+
+gem "typhoeus", "~> 1.4"
+
+gem "hydra", "~> 0.24.0"
