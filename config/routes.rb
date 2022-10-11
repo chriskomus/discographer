@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   get 'tests/edit_want'
   get 'tests/remove_want'
   get 'tests/whoami'
+  get '/about', to: 'welcome#about', as: :about
+  get '/erd', to: 'welcome#erd', as: :erd
   resources :videos
   resources :tracks
   resources :genres
