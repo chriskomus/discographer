@@ -1,9 +1,19 @@
 <section class="page-section tile">
   <div class="container">
-    <p>artist: <%= @artist.name %></p>
+<!--    <img src="<%#= @image %>" alt="<%#= @artist.name %>">-->
+    <p>imageuri:</p>
+    <img src="<%= @artist_image %>" alt="<%= @artist.name %>">
+    <p>name: <%= @artist.name %></p>
     <p>profile: <%= @artist.profile %></p>
     <!--<p>artist_releases: <%#= @artist_releases %></p>-->
-    <p>release: <%= @release.title %></p>
-    <!--<p>label: <%#= @label %></p>-->
+<!--    <p>artist releases:</p>-->
+    <%= @artist_releases.each do |artist_release| %>
+      <img src="<%= artist_release.thumb %>" alt="<%= artist_release.title %>">
+        <p><%= artist_release.title %></p>
+<!--        <p><%#= artist_release.title %></p>-->
+<!--        <p><%#= artist_release.notes %></p>-->
+    <% end %>
+1.2
+    END
   </div>
 </section>
