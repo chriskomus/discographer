@@ -8,8 +8,46 @@
       <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
       <div class="divider-custom-line"></div>
     </div>
-    About
 
+    <h1>About The Project and Data</h1>
+
+    <p>The AlbumCatalog project seeds data from Discogs's API (both public and authenticated) and displays it to the
+      user after it has been stored in the database. The data includes:</p>
+
+    <ul>
+      <li>Artists</li>
+      <li>Record Labels</li>
+      <li>Releases (with track names and YouTube links)</li>
+      <li>Genres</li>
+    </ul>
+
+    <h1>Tables and Data Structure</h1>
+
+    <p>This is accomplished using 6 tables for the above mentioned (including a table for the tracks and another
+      table for the video links). In addition to these tables there are tables to support many-to-many relationships.</p>
+
+    <h3>Many to Many Relationships</h3>
+
+    <p>The many-to-many relationships include:</p>
+
+    <ul>
+      <li>An artist can be on many labels, and a label can have many artists.</li>
+      <li>An artist can have many releases, and a release can have many contributing artists.</li>
+      <li>A genre can have many releases in that genre, and a release can have many genres.</li>
+      <li>A label can have many releases, and a release can be on many labels (ie: album re-issues).</li>
+      <li>A label can have many releases, and a release can be on many labels (ie: album re-issues).</li>
+    </ul>
+
+    <h3>One to Many Relationships</h3>
+
+    <p>The one-to-many relationships include:</p>
+
+    <ul>
+      <li>A release can have many tracks.</li>
+      <li>A release can have many videos.</li>
+    </ul>
+
+    <h3><%= link_to 'Entity Relationship Diagram (ERD)', erd_path %></h3>
 
   </div>
 </section>

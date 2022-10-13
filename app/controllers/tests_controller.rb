@@ -9,6 +9,9 @@ class TestsController < ApplicationController
   def index
   end
 
+  ##
+  # Authenticate discog's api using app key and secret, then save a request token as a session var
+  # Redirect to discogs to authenticate and then get passed to the callback function with the oath verifier
   def authenticate
     app_key = ENV["DISCOGS_API_KEY"]
     app_secret = ENV["DISCOGS_API_SECRET"]
@@ -21,6 +24,11 @@ class TestsController < ApplicationController
     redirect_to request_data[:authorize_url], allow_other_host: true
   end
 
+  ##
+  # After an oauth request has been made to discogs, user is passed to callback function
+  # where an access_token is created and stores as a session var. Redirected to index afterwards and user should now
+  # be authenticated.
+  # Authentication is only needed when requestion image uris.
   def callback
     request_token = session[:request_token]
     verifier = params[:oauth_verifier]
@@ -30,13 +38,6 @@ class TestsController < ApplicationController
     session[:access_token] = access_token
 
     redirect_to action: "index"
-  end
-
-  # Once you have it, you can also pass your access_token into the constructor.
-  def another_action
-    @discogs = Discogs::Wrapper.new("AlbumCatalog", access_token: session[:access_token])
-
-    # You can now perform authenticated requests.
   end
 
   def show
@@ -53,8 +54,9 @@ class TestsController < ApplicationController
     @user = @discogs.get_identity
   end
 
-  # testing for basic discogs wrapper
-  def add_want
+  ##
+  # Testing for basic discogs wrapper, authenticated so images will load
+  def artist_releases
     wrapper = Discogs::Wrapper.new('AlbumCatalog', access_token: session[:access_token])
     arr = [22673, 99459, 45, 269] # shpongle, carbon based lifeforms, aphex twin, squarepusher
     artist_id = arr[3]
@@ -63,12 +65,12 @@ class TestsController < ApplicationController
     @artist_image = @artist.images.find_all { |img| img.type == 'primary' }[0].uri
 
     total_count = wrapper.get_artist_releases(artist_id).pagination.items
-    raw_artist_releases = wrapper.get_artist_releases(artist_id, :page => 1, :per_page => total_count).releases
+    @artist_releases = wrapper.get_artist_releases(artist_id, :page => 1, :per_page => total_count).releases
 
-    @artist_releases = []
-    raw_artist_releases.each do |artist_release|
-
-    end
+    # @artist_releases = []
+    # raw_artist_releases.each do |artist_release|
+    #
+    # end
 
     # @artist_releases = wrapper.get_artist_releases("329937")
     #  # @release = wrapper.get_release("161683")
@@ -76,22 +78,9 @@ class TestsController < ApplicationController
 
   end
 
-  def edit_want
-    # release_id = '2489281'
-    # notes = 'Added via the Discogs Ruby Gem. But, you *DO* want it now!!'
-    # rating = 5
-    #
-    # @user = @discogs.get_identity
-    # @response = @discogs.edit_release_in_user_wantlist(@user.username,
-    #                                                    release_id,
-    #                                                    { :notes => notes, :rating => rating })
-  end
-
-  def remove_want
-  end
-
-  # testing discogs api without wrapper
-  def get_artist
+  ##
+  # Basic testing discogs api without using the wrapper. Not authenticated so limited functionality.
+  def artist
     req = 'artists'
     params = '22673'
 
