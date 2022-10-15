@@ -20,8 +20,9 @@
           <div class="tile-item mx-auto" data-bs-toggle="modal" data-bs-target="#modal<%= release.id %>">
             <%= link_to '<div class="tile-item-caption d-flex align-items-center justify-content-center h-100 w-100"><div class="tile-item-caption-content text-center text-white"><i class="fa-sharp fa-solid fa-eye"></i></div></div>'.html_safe, release %>
             <h3><%= release.title %></h3>
-            <h4><%= release.country %></h4>
+            <h4><%= release.catalog_num %></h4>
             <h4><%= release.year %></h4>
+            <strong><%= release.country %></strong>
             <p><%= truncate(release.notes, length: 100) %></p>
             <img class="img-fluid" src="<%= release.imageuri %>" alt="<%= release.title %>"/>
 

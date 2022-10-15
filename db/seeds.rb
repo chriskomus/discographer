@@ -24,9 +24,11 @@ labels = [467138] # twisted records, warp records, platipus,  hyperdub, leftfiel
 # -------
 
 # iterate through each label
-labels.each do |id|
+labels.each_with_index  do |id, i|
   # Get label object
   label = wrapper.get_label(id)
+
+  p "Processing #{label.name}. Item #{i} of #{labels.count}"
 
   # Create label in database
   new_label = Label.where(:discogs_id => id).first_or_create { |item|
@@ -34,10 +36,6 @@ labels.each do |id|
     item.profile = label.profile
     item.discogs_id = label.id
   }
-
-  # new_label = Label.create!(name: label.name,
-  #                           profile: label.profile,
-  #                           discogs_id: label.id)
 
   # RELEASES
   # --------
@@ -47,28 +45,27 @@ labels.each do |id|
   label_releases = wrapper.get_labels_releases(id, :page => 1, :per_page => total_count).releases
 
   # Iterate through a label's releases
-  label_releases.each do |r|
+  label_releases.each_with_index  do |r, j|
+    p "  Processing #{r.title}. Item #{j} of #{label_releases.count}"
+
     # Get release object
     release = wrapper.get_release(r.id)
 
     unless release.title.blank?
+      p "  Adding #{release.title}"
+
       # Create release in database
-      # new_release = Release.create!(title: release.title,
-      #                               notes: release.notes,
-      #                               year: release.year,
-      #                               country: release.country,
-      #                               discogs_id: release.id)
-      #
       new_release = Release.where(:title => release.title).first_or_create { |item|
         item.title = release.title
         item.notes = release.notes
         item.year = release.year
         item.country = release.country
+        item.catalog_num = release.catno
         item.discogs_id = release.id
       }
 
       # Associate release with label
-      new_label.release_ids << new_release.id
+      new_label.releases << new_release unless new_label.releases.include?(new_release)
       new_label.save
 
       # ARTISTS
@@ -78,22 +75,28 @@ labels.each do |id|
       release_artists = release.artists
 
       # Iterate through a release's artists
-      release_artists.each do |ra|
+      release_artists.each_with_index  do |ra, k|
+        p "    Processing #{ra.name}. Item #{k} of #{release_artists.count}"
+
         # Get artist object
         artist = wrapper.get_artist(ra.id)
 
         unless artist.name.blank?
+          p "    Adding #{artist.name}"
+
           # Create artist in database
-          new_artist = Artist.create!(name: artist.name,
-                                      profile: artist.profile,
-                                      discogs_id: artist.id)
+          new_artist = Artist.where(:name => artist.name).first_or_create { |item|
+            item.name = artist.name
+            item.profile = artist.profile
+            item.discogs_id = artist.id
+          }
 
           # Associate artist with release
-          new_release.artist_ids << new_artist.id
+          new_release.artists << new_artist unless new_release.artists.include?(new_artist)
           new_release.save
 
           # Associate artist with label
-          new_label.artist_ids << new_artist.id
+          new_label.artists << new_artist unless new_label.artists.include?(new_artist)
           new_label.save
         end
       end
@@ -105,14 +108,19 @@ labels.each do |id|
       release_genres = release.styles
 
       # Iterate through a release's genres
-      release_genres.each do |rg|
+      release_genres.each_with_index  do |rg, l|
+        p "    Processing #{rg}. Item #{l} of #{release_genres.count}"
 
         unless rg.blank?
+          p "    Adding #{rg}"
+
           # Create genre in database
-          new_genre = Genre.create!(name: rg)
+          new_genre = Genre.where(:name => rg).first_or_create { |item|
+            item.name = rg
+          }
 
           # Associate genre with release
-          new_release.genre_ids << new_genre.id
+          new_release.genres << new_genre unless new_release.genres.include?(new_genre)
           new_release.save
         end
 
