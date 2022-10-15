@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_11_021415) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_15_205206) do
   create_table "artists", force: :cascade do |t|
     t.string "name", null: false
     t.string "profile"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "imageuri"
+    t.integer "discogs_id"
   end
 
   create_table "artists_labels", id: false, force: :cascade do |t|
@@ -46,6 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_11_021415) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "imageuri"
+    t.integer "discogs_id"
   end
 
   create_table "labels_releases", id: false, force: :cascade do |t|
@@ -61,6 +63,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_11_021415) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "imageuri"
+    t.integer "discogs_id"
   end
 
   create_table "sessions", force: :cascade do |t|

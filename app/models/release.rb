@@ -7,4 +7,5 @@ class Release < ApplicationRecord
   has_many :videos, dependent: :destroy
 
   validates :title, presence: true
+  validates :discogs_id, presence: true
 end
