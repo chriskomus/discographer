@@ -29,13 +29,15 @@ labels.each do |id|
   label = wrapper.get_label(id)
 
   # Create label in database
-  # new_label = Label.upsert(discogs_id: label.id)
-  # new_label.name = label.name
-  # new_label.profile = label.profile
+  new_label = Label.where(:discogs_id => id).first_or_create { |item|
+    item.name = label.name
+    item.profile = label.profile
+    item.discogs_id = label.id
+  }
 
-  new_label = Label.create!(name: label.name,
-                            profile: label.profile,
-                            discogs_id: label.id)
+  # new_label = Label.create!(name: label.name,
+  #                           profile: label.profile,
+  #                           discogs_id: label.id)
 
   # RELEASES
   # --------
@@ -51,11 +53,19 @@ labels.each do |id|
 
     unless release.title.blank?
       # Create release in database
-      new_release = Release.create!(title: release.title,
-                                    notes: release.notes,
-                                    year: release.year,
-                                    country: release.country,
-                                    discogs_id: release.id)
+      # new_release = Release.create!(title: release.title,
+      #                               notes: release.notes,
+      #                               year: release.year,
+      #                               country: release.country,
+      #                               discogs_id: release.id)
+      #
+      new_release = Release.where(:title => release.title).first_or_create { |item|
+        item.title = release.title
+        item.notes = release.notes
+        item.year = release.year
+        item.country = release.country
+        item.discogs_id = release.id
+      }
 
       # Associate release with label
       new_label.release_ids << new_release.id
