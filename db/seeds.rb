@@ -44,9 +44,6 @@ class ImportDiscogs
       generate_all_albums_by_artist(id)
     end
 
-    @log.debug "[Processed #{labels.count} Labels]"
-    @log.debug "[Processed #{labels.count}Artists]"
-
     generated_count
 
     @log.info "[ALL DONE!] Successfully imported #{labels.count} labels, and #{artists.count} artists."
@@ -98,6 +95,7 @@ class ImportDiscogs
       # Iterate through an artist's Albums
       artist_albums.releases.each_with_index do |r, i|
         @log.debug "[Processing Album] #{r.title}. Item #{i + 1} of #{artist_albums.releases.count}"
+
 
         create_or_get_album(r.id)
       end
