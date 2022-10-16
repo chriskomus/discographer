@@ -9,7 +9,7 @@ def seed_database(user_token)
   labels = [467138] # twisted records, warp records, platipus,  hyperdub, leftfield
 
   # iterate through each label
-  labels.each_with_index  do |id, i|
+  labels.each_with_index do |id, i|
     # Create label in database
     new_label = create_or_get_label(id, user_token)
 
@@ -30,17 +30,19 @@ def generate_all_releases_on_label(label_id, user_token)
   page = 1
   per_page = 100
   label_releases = wrapper.get_labels_releases(label_id, :page => page, :per_page => per_page)
+  make_request(label_releases, wrapper.get_labels_releases(label_id, :page => page, :per_page => per_page)) # check if Discogs has rate limited the request
   pages = label_releases.pagination.pages
 
   while page <= pages
     # Get next page of data, this has already been done for the first page, so if page is 1 this is skipped
     unless page == 1
       label_releases = wrapper.get_labels_releases(id, :page => page, :per_page => per_page).releases
+      make_request(label_releases, wrapper.get_labels_releases(id, :page => page, :per_page => per_page).releases) # check if Discogs has rate limited the request
     end
 
     # Iterate through a label's releases
-    label_releases.releases.each_with_index  do |r, i|
-      p "  Processing #{r.title}. Item #{i+1} of #{label_releases.releases.count}"
+    label_releases.releases.each_with_index do |r, i|
+      p "  Processing #{r.title}. Item #{i + 1} of #{label_releases.releases.count}"
 
       create_or_get_release(r.id, user_token)
     end
@@ -51,9 +53,7 @@ end
 
 ##
 # Generate all releases by an artist from Discogs API
-def generate_all_releases_by_artist(label_id, user_token)
-
-end
+def generate_all_releases_by_artist(label_id, user_token) end
 
 ##
 # Create or get a release from Discogs API
@@ -65,8 +65,7 @@ def create_or_get_release(id, user_token)
 
   # Get release object
   release = wrapper.get_release(id)
-
-  p "  release = #{release}"
+  make_request(release, wrapper.get_release(id)) # check if Discogs has rate limited the request
 
   unless release.title.blank?
     p "  Adding #{release.title}"
@@ -83,8 +82,8 @@ def create_or_get_release(id, user_token)
 
     # Get release's labels and iterate through them, adding to database
     release_labels = release.labels
-    release_labels.each_with_index  do |rl, i|
-      p "    Processing #{rl.name}. Item #{i+1} of #{release_labels.count}"
+    release_labels.each_with_index do |rl, i|
+      p "    Processing #{rl.name}. Item #{i + 1} of #{release_labels.count}"
       new_label = create_or_get_label(rl.id, user_token)
 
       # Associate release with label
@@ -92,8 +91,8 @@ def create_or_get_release(id, user_token)
 
       # Get release's artists and iterate through them, adding to database
       release_artists = release.artists
-      release_artists.each_with_index  do |ra, j|
-        p "    Processing #{ra.name}. Item #{j+1} of #{release_artists.count}"
+      release_artists.each_with_index do |ra, j|
+        p "    Processing #{ra.name}. Item #{j + 1} of #{release_artists.count}"
         new_artist = create_or_get_artist(ra.id, user_token)
 
         # Associate artist with release
@@ -106,8 +105,8 @@ def create_or_get_release(id, user_token)
 
     # Get release's genres and iterate through them, adding to database
     release_genres = release.styles
-    release_genres.each_with_index  do |rg, k|
-      p "    Processing #{rg}. Item #{k+1} of #{release_genres.count}"
+    release_genres.each_with_index do |rg, k|
+      p "    Processing #{rg}. Item #{k + 1} of #{release_genres.count}"
       new_genre = create_or_get_genre(rg)
 
       # Associate genre with release
@@ -127,6 +126,7 @@ def create_or_get_label(id, user_token)
 
   # Get label object
   label = wrapper.get_label(id)
+  make_request(label, wrapper.get_label(id)) # check if Discogs has rate limited the request
 
   # Create label in database
   Label.where(:discogs_id => id).first_or_create { |item|
@@ -146,6 +146,7 @@ def create_or_get_artist(id, user_token)
 
   # Get artist object
   artist = wrapper.get_artist(id)
+  make_request(artist, wrapper.get_artist(id)) # check if Discogs has rate limited the request
 
   unless artist.name.blank?
     p "    Adding #{artist.name}"
@@ -196,29 +197,37 @@ end
 ##
 # Add a release to a label in the database
 def add_release_to_label(release, label)
-  label.releases << release unless label.releases.include?(release)
-  label.save
+  unless label == nil || release == nil
+    label.releases << release unless label.releases.include?(release)
+    label.save
+  end
 end
 
 ##
 # Add an artist to a release in the database
 def add_artist_to_release(artist, release)
-  release.artists << artist unless release.artists.include?(artist)
-  release.save
+  unless artist == nil || release == nil
+    release.artists << artist unless release.artists.include?(artist)
+    release.save
+  end
 end
 
 ##
 # Add an artist to a label in the database
 def add_artist_to_label(artist, label)
-  label.artists << artist unless label.artists.include?(artist)
-  label.save
+  unless artist == nil || label == nil
+    label.artists << artist unless label.artists.include?(artist)
+    label.save
+  end
 end
 
 ##
 # Add a genre to a release in the database
 def add_genre_to_release(genre, release)
-  release.genres << genre unless release.genres.include?(genre)
-  release.save
+  unless genre == nil || release == nil
+    release.genres << genre unless release.genres.include?(genre)
+    release.save
+  end
 end
 
 ##
@@ -241,6 +250,16 @@ def clear_database
   Genre.destroy_all
   # Track.destroy_all
   # Video.destroy_all
+end
+
+##
+# Discogs rate limits to 60 requests per minute. If the response message indicates a rate limit
+# wait 60 seconds and continue.
+def make_request(response, callback)
+  if response.message == "You are making requests too quickly."
+    sleep(60)
+    send(callback)
+  end
 end
 
 seed_database(user_token)
