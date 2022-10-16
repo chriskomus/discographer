@@ -44,7 +44,12 @@ class ImportDiscogs
       generate_all_releases_by_artist(id)
     end
 
+    @log.debug "[Processed #{labels.count} Labels]"
+    @log.debug "[Processed #{labels.count}Artists]"
+
     generated_count
+
+    @log.info "[ALL DONE!] Successfully imported #{labels.count} labels, and #{artists.count} artists."
   end
 
   ##
@@ -117,7 +122,7 @@ class ImportDiscogs
       @log.info "[Adding Release] #{release.title}"
 
       # Create release in database
-      new_release = Release.where(:catalog_num => release.catno).first_or_create { |item|
+      new_release = Release.where(:title => release.title).first_or_create { |item|
         item.title = release.title
         item.notes = release.notes
         item.year = release.year
