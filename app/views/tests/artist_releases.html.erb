@@ -5,13 +5,13 @@
     <img src="<%= @artist_image %>" alt="<%= @artist.name %>">
     <p>name: <%= @artist.name %></p>
     <p>profile: <%= @artist.profile %></p>
-    <!--<p>artist_releases: <%#= @artist_releases %></p>-->
-<!--    <p>artist releases:</p>-->
-    <%= @artist_releases.each do |artist_release| %>
-      <img src="<%= artist_release.thumb %>" alt="<%= artist_release.title %>">
-        <p><%= artist_release.title %></p>
-<!--        <p><%#= artist_release.title %></p>-->
-<!--        <p><%#= artist_release.notes %></p>-->
+    <!--<p>artist_albums: <%#= @artist_albums %></p>-->
+<!--    <p>artist Albums:</p>-->
+    <%= @artist_albums.each do |artist_album| %>
+      <img src="<%= artist_album.thumb %>" alt="<%= artist_album.title %>">
+        <p><%= artist_album.title %></p>
+<!--        <p><%#= artist_album.title %></p>-->
+<!--        <p><%#= artist_album.notes %></p>-->
     <% end %>
 1.2
     END

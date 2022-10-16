@@ -1,5 +1,5 @@
 class Track < ApplicationRecord
-  belongs_to :release
+  belongs_to :album
 
   validates :title, presence: true
 end

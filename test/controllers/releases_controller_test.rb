@@ -1,48 +1,48 @@
 require "test_helper"
 
-class ReleasesControllerTest < ActionDispatch::IntegrationTest
+class AlbumsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @release = releases(:one)
+    @album = albums(:one)
   end
 
   test "should get index" do
-    get releases_url
+    get albums_url
     assert_response :success
   end
 
   test "should get new" do
-    get new_release_url
+    get new_album_url
     assert_response :success
   end
 
-  test "should create release" do
-    assert_difference("Release.count") do
-      post releases_url, params: { release: { country: @release.country, id: @release.id, notes: @release.notes, title: @release.title, year: @release.year } }
+  test "should create album" do
+    assert_difference("Album.count") do
+      post albums_url, params: { album: { country: @album.country, id: @album.id, notes: @album.notes, title: @album.title, year: @album.year } }
     end
 
-    assert_redirected_to release_url(Release.last)
+    assert_redirected_to album_url(Album.last)
   end
 
-  test "should show release" do
-    get release_url(@release)
+  test "should show album" do
+    get album_url(@album)
     assert_response :success
   end
 
   test "should get edit" do
-    get edit_release_url(@release)
+    get edit_album_url(@album)
     assert_response :success
   end
 
-  test "should update release" do
-    patch release_url(@release), params: { release: { country: @release.country, id: @release.id, notes: @release.notes, title: @release.title, year: @release.year } }
-    assert_redirected_to release_url(@release)
+  test "should update album" do
+    patch album_url(@album), params: { album: { country: @album.country, id: @album.id, notes: @album.notes, title: @album.title, year: @album.year } }
+    assert_redirected_to album_url(@album)
   end
 
-  test "should destroy release" do
-    assert_difference("Release.count", -1) do
-      delete release_url(@release)
+  test "should destroy album" do
+    assert_difference("Album.count", -1) do
+      delete album_url(@album)
     end
 
-    assert_redirected_to releases_url
+    assert_redirected_to albums_url
   end
 end

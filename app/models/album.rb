@@ -1,4 +1,4 @@
-class Release < ApplicationRecord
+class Album < ApplicationRecord
   has_and_belongs_to_many :labels
   has_and_belongs_to_many :artists
   has_and_belongs_to_many :genres
@@ -7,5 +7,4 @@ class Release < ApplicationRecord
   has_many :videos, dependent: :destroy
 
   validates :title, presence: true
-  validates :discogs_id, presence: true
 end
