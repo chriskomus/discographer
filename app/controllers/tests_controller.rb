@@ -56,7 +56,7 @@ class TestsController < ApplicationController
 
   ##
   # Testing for basic discogs wrapper, authenticated so images will load
-  def artist_releases
+  def artist_albums
     wrapper = Discogs::Wrapper.new('AlbumCatalog', access_token: session[:access_token])
     arr = [22673, 99459, 45, 269] # shpongle, carbon based lifeforms, aphex twin, squarepusher
     artist_id = arr[3]
@@ -65,15 +65,15 @@ class TestsController < ApplicationController
     @artist_image = @artist.images.find_all { |img| img.type == 'primary' }[0].uri
 
     total_count = wrapper.get_artist_releases(artist_id).pagination.items
-    @artist_releases = wrapper.get_artist_releases(artist_id, :page => 1, :per_page => total_count).releases
+    @artist_albums = wrapper.get_artist_releases(artist_id, :page => 1, :per_page => total_count).releases
 
-    # @artist_releases = []
-    # raw_artist_releases.each do |artist_release|
+    # @artist_albums = []
+    # raw_artist_albums.each do |artist_album|
     #
     # end
 
-    # @artist_releases = wrapper.get_artist_releases("329937")
-    #  # @release = wrapper.get_release("161683")
+    # @artist_albums = wrapper.get_artist_albums("329937")
+    #  # @album = wrapper.get_release("161683")
     #     # @label = wrapper.get_label("3336")
 
   end

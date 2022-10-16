@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   resources :videos
   resources :tracks
   resources :genres
-  resources :releases
+  resources :albums
   resources :labels
   resources :artists
   root "welcome#index"
