@@ -29,15 +29,18 @@ def generate_all_releases_on_label(label_id, user_token)
   # Get label's releases
   page = 1
   per_page = 100
-  label_releases = wrapper.get_labels_releases(label_id, :page => page, :per_page => per_page)
-  make_request(label_releases, wrapper.get_labels_releases(label_id, :page => page, :per_page => per_page)) # check if Discogs has rate limited the request
+  # label_releases = wrapper.get_labels_releases(label_id, :page => page, :per_page => per_page)
+  # label_releases = make_request(:wrapper.get_labels_releases(label_id, :page => page, :per_page => per_page))
+  req_method = wrapper.method(:get_labels_releases)
+  label_releases = make_request(req_method, label_id, { :page => page, :per_page => per_page })
   pages = label_releases.pagination.pages
 
   while page <= pages
     # Get next page of data, this has already been done for the first page, so if page is 1 this is skipped
     unless page == 1
-      label_releases = wrapper.get_labels_releases(id, :page => page, :per_page => per_page).releases
-      make_request(label_releases, wrapper.get_labels_releases(id, :page => page, :per_page => per_page).releases) # check if Discogs has rate limited the request
+      # label_releases = wrapper.get_labels_releases(id, :page => page, :per_page => per_page).releases
+      # label_releases = make_request(:wrapper.get_labels_releases(id, :page => page, :per_page => per_page).releases)
+      label_releases = make_request(req_method, label_id, { :page => page, :per_page => per_page })
     end
 
     # Iterate through a label's releases
@@ -64,8 +67,10 @@ def create_or_get_release(id, user_token)
   wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: user_token)
 
   # Get release object
-  release = wrapper.get_release(id)
-  make_request(release, wrapper.get_release(id)) # check if Discogs has rate limited the request
+  # release = wrapper.get_release(id)
+  # release = make_request(:wrapper.get_release(id))
+  req_method = wrapper.method(:get_release)
+  release = make_request(req_method, id)
 
   unless release.title.blank?
     p "  Adding #{release.title}"
@@ -125,8 +130,11 @@ def create_or_get_label(id, user_token)
   wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: user_token)
 
   # Get label object
-  label = wrapper.get_label(id)
-  make_request(label, wrapper.get_label(id)) # check if Discogs has rate limited the request
+  # label = wrapper.get_label(id)
+  # req_method = wrapper.method(:get_label)
+  # label = make_request(req_method, id)
+  req_method = wrapper.method(:get_label)
+  label = make_request(req_method, id)
 
   # Create label in database
   Label.where(:discogs_id => id).first_or_create { |item|
@@ -145,8 +153,10 @@ def create_or_get_artist(id, user_token)
   wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: user_token)
 
   # Get artist object
-  artist = wrapper.get_artist(id)
-  make_request(artist, wrapper.get_artist(id)) # check if Discogs has rate limited the request
+  # artist = wrapper.get_artist(id)
+  # artist = make_request(:wrapper.get_artist(id))
+  req_method = wrapper.method(:get_artist)
+  artist = make_request(req_method, id)
 
   unless artist.name.blank?
     p "    Adding #{artist.name}"
@@ -253,13 +263,24 @@ def clear_database
 end
 
 ##
-# Discogs rate limits to 60 requests per minute. If the response message indicates a rate limit
-# wait 60 seconds and continue.
-def make_request(response, callback)
+# Make a request to the Discogs wrapper by passing the wrapper method (ie: get_label)
+# and the arguments (ie: id) for that method as params to this method. This method then calls the
+# provided wrapper method with it's argument(s) and makes the request and return the response.
+# If a rate limit error is returned, pause for 60 seconds and call the wrapper method again.
+# Note: Discogs rate limits to 60 requests per minute for authorized requests.
+def make_request(meth, *args)
+  # response = callback.(id)
+  response = meth.call(*args)
+
+  # check if Discogs has rate limited the request
   if response.message == "You are making requests too quickly."
+    p "Rate Limit Exceeded: Discogs rate limits to 60 requests per minute. Waiting 60 seconds and continuing..."
     sleep(60)
-    send(callback)
+    # response = callback.(id)
+    response = meth.call(*args)
   end
+
+  response
 end
 
 seed_database(user_token)
