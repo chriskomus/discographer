@@ -1,157 +1,246 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
-#   Character.create(name: "Luke", movie: movies.first)
 require "discogs"
+user_token = "UVHUjZHYJrClanUtJWdzVCUHXvPdDpwppwPgSyWJ"
 
-Artist.destroy_all
-Label.destroy_all
-Release.destroy_all
-Genre.destroy_all
-# Track.destroy_all
-# Video.destroy_all
+def seed_database(user_token)
+  clear_database
 
-wrapper = Discogs::Wrapper.new('AlbumCatalog')
+  artists = [22673, 99459, 45, 269, 62447] # shpongle, carbon based lifeforms, aphex twin, squarepusher, younger brother
+  # labels = [3336, 23528, 925, 25386, 467138, 1504] # twisted records, warp records, platipus,  hyperdub, leftfield, ad noiseum
+  labels = [467138] # twisted records, warp records, platipus,  hyperdub, leftfield
 
-artists = [22673, 99459, 45, 269, 62447] # shpongle, carbon based lifeforms, aphex twin, squarepusher, younger brother
-# labels = [3336, 23528, 925, 25386, 467138] # twisted records, warp records, platipus,  hyperdub, leftfield
-labels = [467138] # twisted records, warp records, platipus,  hyperdub, leftfield
+  # iterate through each label
+  labels.each_with_index  do |id, i|
+    # Create label in database
+    new_label = create_or_get_label(id, user_token)
 
-# LABELS
-# -------
+    p "Created #{new_label.name}"
 
-# iterate through each label
-labels.each_with_index  do |id, i|
+    generate_all_releases_on_label(id, user_token)
+  end
+
+  generated_count
+end
+
+##
+# Generate all releases on a label from Discogs API
+def generate_all_releases_on_label(label_id, user_token)
+  wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: user_token)
+
+  # Get label's releases
+  page = 1
+  per_page = 100
+  label_releases = wrapper.get_labels_releases(label_id, :page => page, :per_page => per_page)
+  pages = label_releases.pagination.pages
+
+  while page <= pages
+    # Get next page of data, this has already been done for the first page, so if page is 1 this is skipped
+    unless page == 1
+      label_releases = wrapper.get_labels_releases(id, :page => page, :per_page => per_page).releases
+    end
+
+    # Iterate through a label's releases
+    label_releases.releases.each_with_index  do |r, i|
+      p "  Processing #{r.title}. Item #{i+1} of #{label_releases.releases.count}"
+
+      create_or_get_release(r.id, user_token)
+    end
+
+    page = page + 1
+  end
+end
+
+##
+# Generate all releases by an artist from Discogs API
+def generate_all_releases_by_artist(label_id, user_token)
+
+end
+
+##
+# Create or get a release from Discogs API
+# Take in a Discogs id and create a wrapper object,
+# then create an entry in the database
+# Add the release to the label, then add the artists and genre to the database
+def create_or_get_release(id, user_token)
+  wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: user_token)
+
+  # Get release object
+  release = wrapper.get_release(id)
+
+  p "  release = #{release}"
+
+  unless release.title.blank?
+    p "  Adding #{release.title}"
+
+    # Create release in database
+    new_release = Release.where(:title => release.title).first_or_create { |item|
+      item.title = release.title
+      item.notes = release.notes
+      item.year = release.year
+      item.country = release.country
+      item.catalog_num = release.catno
+      item.discogs_id = release.id
+    }
+
+    # Get release's labels and iterate through them, adding to database
+    release_labels = release.labels
+    release_labels.each_with_index  do |rl, i|
+      p "    Processing #{rl.name}. Item #{i+1} of #{release_labels.count}"
+      new_label = create_or_get_label(rl.id, user_token)
+
+      # Associate release with label
+      add_release_to_label(new_release, new_label)
+
+      # Get release's artists and iterate through them, adding to database
+      release_artists = release.artists
+      release_artists.each_with_index  do |ra, j|
+        p "    Processing #{ra.name}. Item #{j+1} of #{release_artists.count}"
+        new_artist = create_or_get_artist(ra.id, user_token)
+
+        # Associate artist with release
+        add_artist_to_release(new_artist, new_release)
+
+        # Associate artist with label
+        add_artist_to_label(new_artist, new_label)
+      end
+    end
+
+    # Get release's genres and iterate through them, adding to database
+    release_genres = release.styles
+    release_genres.each_with_index  do |rg, k|
+      p "    Processing #{rg}. Item #{k+1} of #{release_genres.count}"
+      new_genre = create_or_get_genre(rg)
+
+      # Associate genre with release
+      add_genre_to_release(new_genre, new_release)
+    end
+
+    new_release
+  end
+end
+
+##
+# Generate a label from Discogs API
+# Take in a Discogs id and create a wrapper object,
+# then create an entry in the database
+def create_or_get_label(id, user_token)
+  wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: user_token)
+
   # Get label object
   label = wrapper.get_label(id)
 
-  p "Processing #{label.name}. Item #{i} of #{labels.count}"
-
   # Create label in database
-  new_label = Label.where(:discogs_id => id).first_or_create { |item|
+  Label.where(:discogs_id => id).first_or_create { |item|
     item.name = label.name
     item.profile = label.profile
     item.discogs_id = label.id
   }
+end
 
-  # RELEASES
-  # --------
+##
+# Create or get an artist from Discogs API
+# Take in a Discogs id and create a wrapper object,
+# then create an entry in the database.
+# Then add the artist to the release, and the artist to the label.
+def create_or_get_artist(id, user_token)
+  wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: user_token)
 
-  # Get label's releases
-  total_count = wrapper.get_labels_releases(id).pagination.items
-  label_releases = wrapper.get_labels_releases(id, :page => 1, :per_page => total_count).releases
+  # Get artist object
+  artist = wrapper.get_artist(id)
 
-  # Iterate through a label's releases
-  label_releases.each_with_index  do |r, j|
-    p "  Processing #{r.title}. Item #{j} of #{label_releases.count}"
+  unless artist.name.blank?
+    p "    Adding #{artist.name}"
 
-    # Get release object
-    release = wrapper.get_release(r.id)
-
-    unless release.title.blank?
-      p "  Adding #{release.title}"
-
-      # Create release in database
-      new_release = Release.where(:title => release.title).first_or_create { |item|
-        item.title = release.title
-        item.notes = release.notes
-        item.year = release.year
-        item.country = release.country
-        item.catalog_num = release.catno
-        item.discogs_id = release.id
-      }
-
-      # Associate release with label
-      new_label.releases << new_release unless new_label.releases.include?(new_release)
-      new_label.save
-
-      # ARTISTS
-      # -------
-
-      # Get release artists
-      release_artists = release.artists
-
-      # Iterate through a release's artists
-      release_artists.each_with_index  do |ra, k|
-        p "    Processing #{ra.name}. Item #{k} of #{release_artists.count}"
-
-        # Get artist object
-        artist = wrapper.get_artist(ra.id)
-
-        unless artist.name.blank?
-          p "    Adding #{artist.name}"
-
-          # Create artist in database
-          new_artist = Artist.where(:name => artist.name).first_or_create { |item|
-            item.name = artist.name
-            item.profile = artist.profile
-            item.discogs_id = artist.id
-          }
-
-          # Associate artist with release
-          new_release.artists << new_artist unless new_release.artists.include?(new_artist)
-          new_release.save
-
-          # Associate artist with label
-          new_label.artists << new_artist unless new_label.artists.include?(new_artist)
-          new_label.save
-        end
-      end
-
-      # GENRES
-      # -------
-
-      # Get release genres
-      release_genres = release.styles
-
-      # Iterate through a release's genres
-      release_genres.each_with_index  do |rg, l|
-        p "    Processing #{rg}. Item #{l} of #{release_genres.count}"
-
-        unless rg.blank?
-          p "    Adding #{rg}"
-
-          # Create genre in database
-          new_genre = Genre.where(:name => rg).first_or_create { |item|
-            item.name = rg
-          }
-
-          # Associate genre with release
-          new_release.genres << new_genre unless new_release.genres.include?(new_genre)
-          new_release.save
-        end
-
-      end
-    end
-
+    # Create artist in database
+    Artist.where(:name => artist.name).first_or_create { |item|
+      item.name = artist.name
+      item.profile = artist.profile
+      item.discogs_id = artist.id
+    }
   end
 end
 
-# artists.each do |id|
-#   artist = wrapper.get_artist(id)
-#   artist_image = artist.images.find_all { |img| img.type == 'primary' }[0].uri
-#
-#   Artist.create!(name: artist.name,
-#                  profile: artist.profile,
-#                  imageuri: artist_image)
-# end
+##
+# Create or get a genre from Discogs API
+# Take in a Discogs id and create a wrapper object,
+# then create an entry in the database.
+# Then add the genre to the release.
+def create_or_get_genre(genre_name)
+  unless genre_name.blank?
+    p "    Adding #{genre_name}"
 
-# artist_image = artist.images.find_all { |img| img.type == 'primary' }[0].uri
+    # Create genre in database
+    Genre.where(:name => genre_name).first_or_create { |item|
+      item.name = genre_name
+    }
+  end
+end
 
-# total_count = wrapper.get_artist_releases(artist_id).pagination.items
-# artist_releases = wrapper.get_artist_releases(artist_id, :page => 1, :per_page => total_count).releases
-#
-#
-# artist_releases.each do |index|
-#
-# end
+##
+# Create or get a track from Discogs API
+# Take in a Discogs id and create a wrapper object,
+# then create an entry in the database
+def create_or_get_track(release)
+  # wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: "UVHUjZHYJrClanUtJWdzVCUHXvPdDpwppwPgSyWJ")
 
-p "Created #{Label.count} labels."
-p "Created #{Release.count} releases."
-p "Created #{Artist.count} artists."
-p "Created #{Genre.count} genres."
-p "Created #{Track.count} tracks."
-p "Created #{Video.count} videos."
+end
+
+##
+# Create or get a video from Discogs API
+# Take in a Discogs id and create a wrapper object,
+# then create an entry in the database
+def create_or_get_video(release)
+  # wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: "UVHUjZHYJrClanUtJWdzVCUHXvPdDpwppwPgSyWJ")
+
+end
+
+##
+# Add a release to a label in the database
+def add_release_to_label(release, label)
+  label.releases << release unless label.releases.include?(release)
+  label.save
+end
+
+##
+# Add an artist to a release in the database
+def add_artist_to_release(artist, release)
+  release.artists << artist unless release.artists.include?(artist)
+  release.save
+end
+
+##
+# Add an artist to a label in the database
+def add_artist_to_label(artist, label)
+  label.artists << artist unless label.artists.include?(artist)
+  label.save
+end
+
+##
+# Add a genre to a release in the database
+def add_genre_to_release(genre, release)
+  release.genres << genre unless release.genres.include?(genre)
+  release.save
+end
+
+##
+# Put a count of all items in the database
+def generated_count
+  p "Created #{Label.count} labels."
+  p "Created #{Release.count} releases."
+  p "Created #{Artist.count} artists."
+  p "Created #{Genre.count} genres."
+  p "Created #{Track.count} tracks."
+  p "Created #{Video.count} videos."
+end
+
+##
+# Clear the database
+def clear_database
+  Artist.destroy_all
+  Label.destroy_all
+  Release.destroy_all
+  Genre.destroy_all
+  # Track.destroy_all
+  # Video.destroy_all
+end
+
+seed_database(user_token)

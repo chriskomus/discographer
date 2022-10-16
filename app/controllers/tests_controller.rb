@@ -57,8 +57,6 @@ class TestsController < ApplicationController
   ##
   # Testing for basic discogs wrapper, authenticated so images will load
   def artist_releases
-    @access_token = session[:access_token]
-
     wrapper = Discogs::Wrapper.new('AlbumCatalog', access_token: session[:access_token])
     arr = [22673, 99459, 45, 269] # shpongle, carbon based lifeforms, aphex twin, squarepusher
     artist_id = arr[3]
