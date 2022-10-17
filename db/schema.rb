@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_16_221328) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_16_232015) do
   create_table "albums", force: :cascade do |t|
     t.integer "year"
     t.string "title", null: false
@@ -23,22 +23,32 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_16_221328) do
     t.string "catalog_num"
   end
 
+  create_table "albums_artists", id: false, force: :cascade do |t|
+    t.integer "album_id", null: false
+    t.integer "artist_id", null: false
+  end
+
+  create_table "albums_genres", id: false, force: :cascade do |t|
+    t.integer "genre_id", null: false
+    t.integer "album_id", null: false
+  end
+
+  create_table "albums_labels", id: false, force: :cascade do |t|
+    t.integer "album_id", null: false
+    t.integer "label_id", null: false
+  end
+
   create_table "artists", force: :cascade do |t|
     t.string "name", null: false
     t.string "profile"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "imageuri"
-    t.integer "discogs_id", null: false
+    t.integer "discogs_id"
   end
 
   create_table "artists_labels", id: false, force: :cascade do |t|
     t.integer "label_id", null: false
-    t.integer "artist_id", null: false
-  end
-
-  create_table "artists_albums", id: false, force: :cascade do |t|
-    t.integer "album_id", null: false
     t.integer "artist_id", null: false
   end
 
@@ -48,34 +58,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_16_221328) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "genres_albums", id: false, force: :cascade do |t|
-    t.integer "genre_id", null: false
-    t.integer "album_id", null: false
-  end
-
   create_table "labels", force: :cascade do |t|
     t.string "name", null: false
     t.string "profile"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "imageuri"
-    t.integer "discogs_id", null: false
+    t.integer "discogs_id"
   end
 
-  create_table "labels_albums", id: false, force: :cascade do |t|
-    t.integer "album_id", null: false
-    t.integer "label_id", null: false
-  end
-
-  create_table "albums_dg_tmp", force: :cascade do |t|
-    t.integer "year"
-    t.string "title", null: false
-    t.string "country"
-    t.string "notes"
+  create_table "releases", force: :cascade do |t|
+    t.string "catno"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "imageuri"
-    t.integer "discogs_id", null: false
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -94,7 +89,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_16_221328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "album_id", null: false
-    t.index ["album_id"], name: "index_tracks_on_album_id"
+    t.index ["album_id"], name: "index_tracks_on_release_id"
   end
 
   create_table "videos", force: :cascade do |t|
@@ -104,17 +99,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_16_221328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "album_id", null: false
-    t.index ["album_id"], name: "index_videos_on_album_id"
+    t.index ["album_id"], name: "index_videos_on_release_id"
   end
 
+  add_foreign_key "albums_artists", "albums", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "albums_artists", "artists", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "albums_genres", "albums", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "albums_genres", "genres", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "albums_labels", "albums", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "albums_labels", "labels", primary_key: "id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "artists_labels", "artists", primary_key: "id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "artists_labels", "labels", primary_key: "id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "artists_albums", "albums", column: "album_id", primary_key: "id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "artists_albums", "artists", primary_key: "id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "genres_albums", "albums", column: "album_id", primary_key: "id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "genres_albums", "genres", primary_key: "id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "labels_albums", "albums", column: "album_id", primary_key: "id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "labels_albums", "labels", primary_key: "id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tracks", "albums", column: "album_id"
-  add_foreign_key "videos", "albums", column: "album_id"
+  add_foreign_key "tracks", "albums", primary_key: "id"
+  add_foreign_key "videos", "albums", primary_key: "id"
 end

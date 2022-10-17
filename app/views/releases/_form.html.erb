@@ -1,0 +1,17 @@
+<%= form_with(model: release) do |form| %>
+  <% if release.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(release.errors.count, "error") %> prohibited this release from being saved:</h2>
+
+      <ul>
+        <% release.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
