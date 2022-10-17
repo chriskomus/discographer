@@ -77,7 +77,7 @@ class ImportDiscogs
 
   ##
   # Generate all Albums by an artist from Discogs API
-  def generate_all_albums_by_artist(label_id)
+  def generate_all_albums_by_artist(artist_id)
     # Get artist's Albums
     page = 1
     per_page = 100
@@ -107,15 +107,16 @@ class ImportDiscogs
   # Take in a Discogs id and create a wrapper object,
   # then create an entry in the database
   # Add the album to the label, then add the artists and genre to the database
-  def create_or_get_album(id)
+  # @param discogs_id: The discogs ID of a discog release
+  def create_or_get_album(discogs_id)
     # Get album object
     # album = wrapper.get_release(id)
     # album = make_request(:wrapper.get_release(id))
     req_method = @wrapper.method(:get_release)
-    album = make_request(req_method, id)
+    album = make_request(req_method, discogs_id)
 
     unless album.title.blank?
-      @log.info "[Adding Album] #{album.title}"
+      @log.info "[Adding Album] #{album.title} - #{album.discogs_id}"
 
       # Create album in database
       new_album = Album.where(:title => album.title).first_or_create { |item|
@@ -132,49 +133,76 @@ class ImportDiscogs
         # Check if the label already exists
         if Label.exists?(name: al.name)
           @log.debug "[Duplicate Label] #{al.name}. Item #{i + 1} of #{album_labels.count}"
+          new_label = Label.where(name: al.name).first
         else
           @log.debug "[Processing Label] #{al.name}. Item #{i + 1} of #{album_labels.count}"
           new_label = create_or_get_label(al.id)
+        end
 
-          # Associate album with label
-          add_album_to_label(new_album, new_label)
+        # Associate album with label
+        add_album_to_label(new_album, new_label)
 
-          # Associate album with release - add a catalog number for this label's release of this album
-          add_album_to_release(new_album, new_label, al.catno)
+        # Associate album with release - add a catalog number for this label's release of this album
+        add_album_to_release(new_album, new_label, al.catno)
 
-          # Get album's artists and iterate through them, adding to database
-          album_artists = album.artists
-          album_artists.each_with_index do |aa, j|
-            # Check if the artist already exists
-            if Artist.exists?(name: aa.name)
-              @log.debug "[Duplicate Artist] #{aa.name}. Item #{j + 1} of #{album_artists.count}"
-            else
-              @log.debug "[Processing Artist] #{aa.name}. Item #{j + 1} of #{album_artists.count}"
-              new_artist = create_or_get_artist(aa.id)
+        # Get album's artists and iterate through them, adding to database
+        album_artists = album.artists
+        album_artists.each_with_index do |aa, j|
+          # Check if the artist already exists
+          if Artist.exists?(name: aa.name)
+            @log.debug "[Duplicate Artist] #{aa.name}. Item #{j + 1} of #{album_artists.count}"
+          else
+            @log.debug "[Processing Artist] #{aa.name}. Item #{j + 1} of #{album_artists.count}"
+            new_artist = create_or_get_artist(aa.id)
 
-              # Associate artist with album
-              add_artist_to_album(new_artist, new_album)
+            # Associate artist with album
+            add_artist_to_album(new_artist, new_album)
 
-              # Associate artist with label
-              add_artist_to_label(new_artist, new_label)
-            end
+            # Associate artist with label
+            add_artist_to_label(new_artist, new_label)
           end
         end
+
       end
 
       # Get album's genres and iterate through them, adding to database
       album_genres = album.styles
-      album_genres.each_with_index do |ag, k|
+      album_genres.each_with_index do |ag, i|
         if Genre.exists?(name: ag)
-          @log.debug "[Duplicate Genre] #{ag}. Item #{k + 1} of #{album_genres.count}"
+          @log.debug "[Duplicate Genre] #{ag}. Item #{i + 1} of #{album_genres.count}"
         else
-          @log.debug "[Processing Genre] #{ag}. Item #{k + 1} of #{album_genres.count}"
+          @log.debug "[Processing Genre] #{ag}. Item #{i + 1} of #{album_genres.count}"
+          new_genre = create_or_get_genre(ag)
+
+          # Associate genre with album
+          add_genre_to_album(new_genre, new_album)
         end
+      end
 
-        new_genre = create_or_get_genre(ag)
+      # Get album's videos and iterate through them, adding to database
+      album_videos = album.videos
+      if album_videos
+        album_videos.each_with_index do |av, i|
+          if Video.exists?(:album => new_album, :title => av.title, :uri => av.uri)
+            @log.debug "[Duplicate Video] #{av.title}. Item #{i + 1} of #{album_videos.count}"
+          else
+            @log.debug "[Processing Video] #{av.title}. Item #{i + 1} of #{album_videos.count}"
+            create_or_get_video(new_album, av)
+          end
+        end
+      end
 
-        # Associate genre with album
-        add_genre_to_album(new_genre, new_album)
+      # Get album's tracks and iterate through them, adding to database
+      album_tracks = album.tracklist
+      if album_tracks
+        album_tracks.each_with_index do |at, i|
+          if Track.exists?(:album => new_album, :title => at.title, :position => at.position)
+            @log.debug "[Duplicate Track] #{at.title}. Item #{i + 1} of #{album_tracks.count}"
+          else
+            @log.debug "[Processing Track] #{at.title}. Item #{i + 1} of #{album_tracks.count}"
+            create_or_get_track(new_album, at)
+          end
+        end
       end
 
       new_album
@@ -185,19 +213,16 @@ class ImportDiscogs
   # Generate a label from Discogs API
   # Take in a Discogs id and create a wrapper object,
   # then create an entry in the database
-  def create_or_get_label(id)
-    # Get label object
-    # label = wrapper.get_label(id)
-    # req_method = wrapper.method(:get_label)
-    # label = make_request(req_method, id)
+  # @param discogs_id: The discogs ID of a label
+  def create_or_get_label(discogs_id)
     req_method = @wrapper.method(:get_label)
-    label = make_request(req_method, id)
+    label = make_request(req_method, discogs_id)
 
     unless label.name.blank?
-      @log.info "[Adding Label] #{label.name}"
+      @log.info "[Adding Label] #{label.name} - #{label.discogs_id}"
 
       # Create label in database
-      Label.where(:discogs_id => id).first_or_create { |item|
+      Label.where(:discogs_id => discogs_id).first_or_create { |item|
         item.name = label.name
         item.profile = label.profile
         item.discogs_id = label.id
@@ -210,15 +235,13 @@ class ImportDiscogs
   # Take in a Discogs id and create a wrapper object,
   # then create an entry in the database.
   # Then add the artist to the album, and the artist to the label.
-  def create_or_get_artist(id)
-    # Get artist object
-    # artist = wrapper.get_artist(id)
-    # artist = make_request(:wrapper.get_artist(id))
+  # @param discogs_id: The discogs ID of a label
+  def create_or_get_artist(discogs_id)
     req_method = @wrapper.method(:get_artist)
-    artist = make_request(req_method, id)
+    artist = make_request(req_method, discogs_id)
 
     unless artist.name.blank?
-      @log.info "[Adding Artist] #{artist.name}"
+      @log.info "[Adding Artist] #{artist.name} - #{artist.discogs_id}"
 
       # Create artist in database
       Artist.where(:name => artist.name).first_or_create { |item|
@@ -249,18 +272,40 @@ class ImportDiscogs
   # Create or get a track from Discogs API
   # Take in a Discogs id and create a wrapper object,
   # then create an entry in the database
-  def create_or_get_track(album)
-    # wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: "UVHUjZHYJrClanUtJWdzVCUHXvPdDpwppwPgSyWJ")
+  # @param album: an object derived from an Album model
+  # @param track: A single track from the .tracklist array in Discogs's releases endpoint
+  def create_or_get_track(album, track)
+    unless track == nil || album == nil
+      @log.info "[Adding Track] #{track.title}"
 
+      # Create track in database
+      Track.where(:album => album, :title => track.title, :position => track.position).first_or_create { |item|
+        item.album = album
+        item.position = track.position
+        item.title = track.title
+        item.duration = track.duration
+      }
+    end
   end
 
   ##
   # Create or get a video from Discogs API
   # Take in a Discogs id and create a wrapper object,
   # then create an entry in the database
-  def create_or_get_video(album)
-    # wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: "UVHUjZHYJrClanUtJWdzVCUHXvPdDpwppwPgSyWJ")
+  # @param album: an object derived from an Album model
+  # @param video: A single video from the .videos array in Discogs's releases endpoint
+  def create_or_get_video(album, video)
+    unless video == nil || album == nil
+      @log.info "[Adding Video] #{video.title}"
 
+      # Create video in database
+      Video.where(:album => album, :title => video.title, :uri => video.uri).first_or_create { |item|
+        item.album = album
+        item.title = video.title
+        item.uri = video.uri
+        item.description = video.description
+      }
+    end
   end
 
   ##
@@ -319,7 +364,8 @@ class ImportDiscogs
   # Put a count of all items in the database
   def generated_count
     @log.info "Database contains #{Label.count} labels."
-    @log.info "Database contains #{Album.count} Albums."
+    @log.info "Database contains #{Album.count} albums."
+    @log.info "Database contains #{Release.count} releases."
     @log.info "Database contains #{Artist.count} artists."
     @log.info "Database contains #{Genre.count} genres."
     @log.info "Database contains #{Track.count} tracks."
@@ -333,8 +379,8 @@ class ImportDiscogs
     Label.destroy_all
     Album.destroy_all
     Genre.destroy_all
+    Video.destroy_all
     # Track.destroy_all
-    # Video.destroy_all
     #
     @log.warn "Database has been cleared."
 
@@ -344,11 +390,10 @@ class ImportDiscogs
       ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'labels'")
       ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'albums'")
       ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'genres'")
+      ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'videos'")
       # ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'tracks'")
-      # ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'videos'")
       @log.warn "Table Primary Key IDs have been reset."
     end
-
   end
 
   ##
