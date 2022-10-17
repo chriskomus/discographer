@@ -26,21 +26,15 @@ class ImportDiscogs
   def seed_database(artists, labels)
     # iterate through each label
     labels.each_with_index do |id, i|
-      # Create label in database
       new_label = create_or_get_label(id)
-
       @log.debug "[Processing Label] #{new_label.name}. Item #{i + 1} of #{labels.count}"
-
       generate_all_albums_on_label(id)
     end
 
     # iterate through each artist
     artists.each_with_index do |id, i|
-      # Create label in database
       new_artist = create_or_get_artist(id)
-
       @log.debug "[Processing Artist] #{new_artist.name}. Item #{i + 1} of #{artists.count}"
-
       generate_all_albums_by_artist(id)
     end
 
@@ -67,9 +61,14 @@ class ImportDiscogs
 
       # Iterate through a label's Albums
       label_albums.releases.each_with_index do |r, i|
-        @log.debug "[Processing Album] #{r.title}. Item #{i + 1} of #{label_albums.releases.count}"
 
-        create_or_get_album(r.id)
+        # Check if the release already exists before adding to the database
+        if Release.exists?(catno: r.catno)
+          @log.debug "[Duplicate Album] #{r.title}. Item #{i + 1} of #{label_albums.releases.count}"
+        else
+          @log.debug "[Processing Album] #{r.title}. Item #{i + 1} of #{label_albums.releases.count}"
+          create_or_get_album(r.id)
+        end
       end
 
       page = page + 1
@@ -95,7 +94,6 @@ class ImportDiscogs
       # Iterate through an artist's Albums
       artist_albums.releases.each_with_index do |r, i|
         @log.debug "[Processing Album] #{r.title}. Item #{i + 1} of #{artist_albums.releases.count}"
-
 
         create_or_get_album(r.id)
       end
@@ -130,32 +128,50 @@ class ImportDiscogs
 
       # Get album's labels and iterate through them, adding to database
       album_labels = album.labels
-      album_labels.each_with_index do |rl, i|
-        @log.debug "[Processing Label] #{rl.name}. Item #{i + 1} of #{album_labels.count}"
-        new_label = create_or_get_label(rl.id)
+      album_labels.each_with_index do |al, i|
+        # Check if the label already exists
+        if Label.exists?(name: al.name)
+          @log.debug "[Duplicate Label] #{al.name}. Item #{i + 1} of #{album_labels.count}"
+        else
+          @log.debug "[Processing Label] #{al.name}. Item #{i + 1} of #{album_labels.count}"
+          new_label = create_or_get_label(al.id)
 
-        # Associate album with label
-        add_album_to_label(new_album, new_label)
+          # Associate album with label
+          add_album_to_label(new_album, new_label)
 
-        # Get album's artists and iterate through them, adding to database
-        album_artists = album.artists
-        album_artists.each_with_index do |ra, j|
-          @log.debug "[Processing Artist] #{ra.name}. Item #{j + 1} of #{album_artists.count}"
-          new_artist = create_or_get_artist(ra.id)
+          # Associate album with release - add a catalog number for this label's release of this album
+          add_album_to_release(new_album, new_label, al.catno)
 
-          # Associate artist with album
-          add_artist_to_album(new_artist, new_album)
+          # Get album's artists and iterate through them, adding to database
+          album_artists = album.artists
+          album_artists.each_with_index do |aa, j|
+            # Check if the artist already exists
+            if Artist.exists?(name: aa.name)
+              @log.debug "[Duplicate Artist] #{aa.name}. Item #{j + 1} of #{album_artists.count}"
+            else
+              @log.debug "[Processing Artist] #{aa.name}. Item #{j + 1} of #{album_artists.count}"
+              new_artist = create_or_get_artist(aa.id)
 
-          # Associate artist with label
-          add_artist_to_label(new_artist, new_label)
+              # Associate artist with album
+              add_artist_to_album(new_artist, new_album)
+
+              # Associate artist with label
+              add_artist_to_label(new_artist, new_label)
+            end
+          end
         end
       end
 
       # Get album's genres and iterate through them, adding to database
       album_genres = album.styles
-      album_genres.each_with_index do |rg, k|
-        @log.debug "[Processing Genre] #{rg}. Item #{k + 1} of #{album_genres.count}"
-        new_genre = create_or_get_genre(rg)
+      album_genres.each_with_index do |ag, k|
+        if Genre.exists?(name: ag)
+          @log.debug "[Duplicate Genre] #{ag}. Item #{k + 1} of #{album_genres.count}"
+        else
+          @log.debug "[Processing Genre] #{ag}. Item #{k + 1} of #{album_genres.count}"
+        end
+
+        new_genre = create_or_get_genre(ag)
 
         # Associate genre with album
         add_genre_to_album(new_genre, new_album)
@@ -253,6 +269,22 @@ class ImportDiscogs
     unless label == nil || album == nil
       label.albums << album unless label.albums.include?(album)
       label.save
+    end
+  end
+
+  ##
+  # Add a album to a release in the database
+  # This is necessary to differential between an album and release, because there is only one single
+  # body of work per album (ie: album, ep, lp) and an album can be released many times on different labels, or
+  # re-released on the same label with a different catalog no.
+  # This will only add a new record if there isn't already a matching catno in the database.
+  def add_album_to_release(album, label, catno)
+    unless label == nil || album == nil
+      Release.where(:catno => catno).first_or_create { |item|
+        item.album = album
+        item.label = label
+        item.catno = catno
+      }
     end
   end
 
@@ -368,5 +400,6 @@ labels = [467138]
 
 import_discogs = ImportDiscogs.new(user_token)
 
-import_discogs.clear_database(true)
+# import_discogs.clear_database(true)
+
 import_discogs.seed_database(artists, labels)
