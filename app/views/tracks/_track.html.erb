@@ -1,17 +1,12 @@
-<div id="<%= dom_id track %>">
-  <p>
-    <strong>Position:</strong>
-    <%= track.position %>
-  </p>
+<!--<div id="<%#= dom_id track %>">-->
+<!--  <p><%#= track.position.nil? || track.position == 0 ? "" : "#{track.position}. " %><%= track.title %><%= track.position.empty? ? "" : " - #{track.duration}" %></p>-->
+<!--</div>-->
 
-  <p>
-    <strong>Title:</strong>
-    <%= track.title %>
-  </p>
 
-  <p>
-    <strong>Duration:</strong>
-    <%= track.duration %>
-  </p>
-
-</div>
+<tr id="<%= dom_id track %>">
+  <th scope="row"><%= track.position.nil? || track.position == 0 ? "" : "#{track.position}" %></th>
+  <% if params[:action] == 'index' %><td><%= link_to track.album.artists[0].name, track.album.artists[0] %></td><% end %>
+  <td><%= track.title %></td>
+    <% if params[:action] == 'index' %><td><%= link_to track.album.title, track.album %></td><% end %>
+  <td><%= track.duration.empty? ? "" : "#{track.duration}" %></td>
+</tr>

@@ -8,6 +8,7 @@ class ArtistsController < ApplicationController
 
   # GET /artists/1 or /artists/1.json
   def show
+    @image_exists = image_exists?(@artist.imageuri)
   end
 
   # GET /artists/new

@@ -16,6 +16,13 @@ class ImportDiscogs
     log_file = "log/debug.log"
     @log = Logger.new(STDOUT, log_file)
     @log.level = Logger::DEBUG
+    @count_artists = 0
+    @count_albums = 0
+    @count_labels = 0
+    @count_genres = 0
+    @count_releases = 0
+    @count_videos = 0
+    @count_tracks = 0
   end
 
   ##
@@ -38,8 +45,6 @@ class ImportDiscogs
       generate_all_albums_by_artist(id)
     end
 
-    generated_count
-
     @log.info "[ALL DONE!] Successfully imported #{labels.count} labels, and #{artists.count} artists."
   end
 
@@ -61,7 +66,6 @@ class ImportDiscogs
 
       # Iterate through a label's Albums
       label_albums.releases.each_with_index do |r, i|
-
         # Check if the release already exists before adding to the database
         if Release.exists?(catno: r.catno)
           @log.debug "[Duplicate Album] #{r.title}. Item #{i + 1} of #{label_albums.releases.count}"
@@ -93,9 +97,13 @@ class ImportDiscogs
 
       # Iterate through an artist's Albums
       artist_albums.releases.each_with_index do |r, i|
-        @log.debug "[Processing Album] #{r.title}. Item #{i + 1} of #{artist_albums.releases.count}"
-
-        create_or_get_album(r.id)
+        # Check if the release already exists before adding to the database
+        if Release.exists?(catno: r.catno)
+          @log.debug "[Duplicate Album] #{r.title}. Item #{i + 1} of #{artist_albums.releases.count}"
+        else
+          @log.debug "[Processing Album] #{r.title}. Item #{i + 1} of #{artist_albums.releases.count}"
+          create_or_get_album(r.id)
+        end
       end
 
       page = page + 1
@@ -116,7 +124,8 @@ class ImportDiscogs
     album = make_request(req_method, discogs_id)
 
     unless album.title.blank?
-      @log.info "[Adding Album] #{album.title} - #{album.discogs_id}"
+      @log.info "[Adding or Editing Album] #{album.title} - #{album.discogs_id}"
+      @count_albums += 1
 
       # Create album in database
       new_album = Album.where(:title => album.title).first_or_create { |item|
@@ -151,31 +160,36 @@ class ImportDiscogs
           # Check if the artist already exists
           if Artist.exists?(name: aa.name)
             @log.debug "[Duplicate Artist] #{aa.name}. Item #{j + 1} of #{album_artists.count}"
+            new_artist = Artist.where(name: aa.name).first
           else
             @log.debug "[Processing Artist] #{aa.name}. Item #{j + 1} of #{album_artists.count}"
             new_artist = create_or_get_artist(aa.id)
-
-            # Associate artist with album
-            add_artist_to_album(new_artist, new_album)
-
-            # Associate artist with label
-            add_artist_to_label(new_artist, new_label)
           end
+
+          # Associate artist with album
+          add_artist_to_album(new_artist, new_album)
+
+          # Associate artist with label
+          add_artist_to_label(new_artist, new_label)
         end
 
       end
 
       # Get album's genres and iterate through them, adding to database
       album_genres = album.styles
-      album_genres.each_with_index do |ag, i|
-        if Genre.exists?(name: ag)
-          @log.debug "[Duplicate Genre] #{ag}. Item #{i + 1} of #{album_genres.count}"
-        else
-          @log.debug "[Processing Genre] #{ag}. Item #{i + 1} of #{album_genres.count}"
-          new_genre = create_or_get_genre(ag)
+      if album_genres
+        album_genres.each_with_index do |ag, i|
+          if Genre.exists?(name: ag)
+            @log.debug "[Duplicate Genre] #{ag}. Item #{i + 1} of #{album_genres.count}"
+            new_genre = Genre.where(name: ag).first
+          else
+            @log.debug "[Processing Genre] #{ag}. Item #{i + 1} of #{album_genres.count}"
+            new_genre = create_or_get_genre(ag)
+          end
 
           # Associate genre with album
           add_genre_to_album(new_genre, new_album)
+
         end
       end
 
@@ -219,7 +233,8 @@ class ImportDiscogs
     label = make_request(req_method, discogs_id)
 
     unless label.name.blank?
-      @log.info "[Adding Label] #{label.name} - #{label.discogs_id}"
+      @log.info "[Adding or Editing Label] #{label.name} - #{label.discogs_id}"
+      @count_labels += 1
 
       # Create label in database
       Label.where(:discogs_id => discogs_id).first_or_create { |item|
@@ -241,7 +256,8 @@ class ImportDiscogs
     artist = make_request(req_method, discogs_id)
 
     unless artist.name.blank?
-      @log.info "[Adding Artist] #{artist.name} - #{artist.discogs_id}"
+      @log.info "[Adding or Editing Artist] #{artist.name} - #{artist.discogs_id}"
+      @count_artists += 1
 
       # Create artist in database
       Artist.where(:name => artist.name).first_or_create { |item|
@@ -259,7 +275,8 @@ class ImportDiscogs
   # Then add the genre to the album.
   def create_or_get_genre(genre_name)
     unless genre_name.blank?
-      @log.info "[Adding Genre] #{genre_name}"
+      @log.info "[Adding or Editing Genre] #{genre_name}"
+      @count_genres += 1
 
       # Create genre in database
       Genre.where(:name => genre_name).first_or_create { |item|
@@ -276,7 +293,8 @@ class ImportDiscogs
   # @param track: A single track from the .tracklist array in Discogs's releases endpoint
   def create_or_get_track(album, track)
     unless track == nil || album == nil
-      @log.info "[Adding Track] #{track.title}"
+      @log.info "[Adding or Editing Track] #{track.title}"
+      @count_tracks += 1
 
       # Create track in database
       Track.where(:album => album, :title => track.title, :position => track.position).first_or_create { |item|
@@ -296,7 +314,8 @@ class ImportDiscogs
   # @param video: A single video from the .videos array in Discogs's releases endpoint
   def create_or_get_video(album, video)
     unless video == nil || album == nil
-      @log.info "[Adding Video] #{video.title}"
+      @log.info "[Adding or Editing Video] #{video.title}"
+      @count_videos += 1
 
       # Create video in database
       Video.where(:album => album, :title => video.title, :uri => video.uri).first_or_create { |item|
@@ -325,6 +344,7 @@ class ImportDiscogs
   # This will only add a new record if there isn't already a matching catno in the database.
   def add_album_to_release(album, label, catno)
     unless label == nil || album == nil
+      @count_releases += 1
       Release.where(:catno => catno).first_or_create { |item|
         item.album = album
         item.label = label
@@ -362,7 +382,19 @@ class ImportDiscogs
 
   ##
   # Put a count of all items in the database
-  def generated_count
+  def log_generated_count
+    @log.info "Added or edited #{@count_labels} labels."
+    @log.info "Added or edited #{@count_albums} albums."
+    @log.info "Added or edited #{@count_releases} releases."
+    @log.info "Added or edited #{@count_artists} artists."
+    @log.info "Added or edited #{@count_genres} genres."
+    @log.info "Added or edited #{@count_tracks} tracks."
+    @log.info "Added or edited #{@count_videos} videos."
+  end
+
+  ##
+  # Put a count of all items in the database
+  def log_database_count
     @log.info "Database contains #{Label.count} labels."
     @log.info "Database contains #{Album.count} albums."
     @log.info "Database contains #{Release.count} releases."
@@ -419,25 +451,9 @@ class ImportDiscogs
   end
 end
 
-##
-# This class is a psuedo IO class that will write to multiple IO objects for logging to both a log file and console
-class MultiIO
-  def initialize(*targets)
-    @targets = targets
-  end
-
-  def write(*args)
-    @targets.each { |t| t.write(*args) }
-  end
-
-  def close
-    @targets.each(&:close)
-  end
-end
-
 # Seed data
-artists = [22673, 99459, 45, 269, 62447] # shpongle, carbon based lifeforms, aphex twin, squarepusher, younger brother
-labels = [3336, 925, 25386, 1504, 467138] # twisted records, platipus,  hyperdub, leftfield, ad noiseum, leftfield
+artists = [22673, 99459, 45, 269, 62447, 1028023] # shpongle, carbon based lifeforms, aphex twin, squarepusher, younger brother, igorrr
+labels = [3336, 925, 25386, 1504, 467138] # twisted records, platipus,  hyperdub, ad noiseum, leftfield
 
 # Test data
 artists = []
@@ -445,6 +461,11 @@ labels = [467138]
 
 import_discogs = ImportDiscogs.new(user_token)
 
-# import_discogs.clear_database(true)
+import_discogs.clear_database(true)
 
 import_discogs.seed_database(artists, labels)
+
+# import_discogs.create_or_get_album(42861)
+
+import_discogs.log_generated_count
+import_discogs.log_database_count

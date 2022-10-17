@@ -1,40 +1,29 @@
-<section class="page-section tile">
-  <div class="container">
-    <!-- Heading-->
-    <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Tracks</h2>
-    <!-- Icon Divider-->
-    <div class="divider-custom">
-      <div class="divider-custom-line"></div>
-      <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-      <div class="divider-custom-line"></div>
-    </div>
-    <!-- Add New Button-->
-    <div class="text-center mt-4">
-      <%= link_to '<i class="fa-solid fa-plus"></i> New Track'.html_safe, new_track_path, class: "btn btn-xl btn-outline-primary" %>
-    </div>
+<!-- Heading-->
+<h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Tracks</h2>
+<!-- Icon Divider-->
+<div class="divider-custom">
+  <div class="divider-custom-line"></div>
+  <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+  <div class="divider-custom-line"></div>
+</div>
+<!-- Add New Button-->
+<div class="text-center mt-4">
+  <%= link_to '<i class="fa-solid fa-plus"></i> New Track'.html_safe, new_track_path, class: "btn btn-xl btn-outline-primary" %>
+</div>
 
-    <table class="table table-hover mt-5">
-      <thead>
-      <tr>
-        <th scope="col">Position</th>
-        <th scope="col">Title</th>
-        <th scope="col">Artist</th>
-        <th scope="col">Album</th>
-        <th scope="col">Duration</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @tracks.each do |track| %>
-        <tr>
-          <th scope="row"><%= track.position %></th>
-          <td><%= track.title %></td>
-          <td></td>
-          <td></td>
-          <td><%= track.duration %></td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-  </div>
-</section>
-
+<table class="table table-hover mt-5">
+  <thead>
+  <tr>
+    <th scope="col">Position</th>
+    <th scope="col">Artist</th>
+    <th scope="col">Title</th>
+    <th scope="col">Album</th>
+    <th scope="col">Duration</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @tracks.each do |track| %>
+    <%= render track %>
+  <% end %>
+  </tbody>
+</table>

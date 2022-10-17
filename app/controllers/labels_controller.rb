@@ -8,6 +8,7 @@ class LabelsController < ApplicationController
 
   # GET /labels/1 or /labels/1.json
   def show
+    @image_exists = image_exists?(@label.imageuri)
   end
 
   # GET /labels/new

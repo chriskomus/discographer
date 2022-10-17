@@ -1,36 +1,13 @@
-<section class="page-section tile">
-  <div class="container">
-    <!-- Heading-->
-    <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Videos</h2>
-    <!-- Icon Divider-->
-    <div class="divider-custom">
-      <div class="divider-custom-line"></div>
-      <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-      <div class="divider-custom-line"></div>
-    </div>
-    <!-- Add New Button-->
-    <div class="text-center mt-4">
-      <%= link_to '<i class="fa-solid fa-plus"></i> New Video'.html_safe, new_video_path, class: "btn btn-xl btn-outline-primary" %>
-    </div>
+<%= render 'layouts/heading', heading: "Videos" %>
 
-    <table class="table table-hover mt-5">
-      <thead>
-      <tr>
-        <th scope="col">Title</th>
-        <th scope="col">URI</th>
-        <th scope="col">Description</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @videos.each do |video| %>
-        <tr>
-          <th scope="row"><%= video.title %></th>
-          <td><%= video.uri %></td>
-          <td><%= video.description %></td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-  </div>
-</section>
+<!-- Add New Button-->
+<div class="text-center mt-4">
+  <%= link_to '<i class="fa-solid fa-plus"></i> New Label'.html_safe, new_video_path, class: "btn btn-xl btn-outline-primary" %>
+</div>
 
+<!-- Grid Items-->
+<div class="row justify-content-center mt-5" id="videos">
+  <% @videos.each do |video| %>
+    <%= render video %>
+  <% end %>
+</div>

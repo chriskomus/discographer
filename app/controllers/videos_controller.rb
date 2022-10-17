@@ -8,6 +8,8 @@ class VideosController < ApplicationController
 
   # GET /videos/1 or /videos/1.json
   def show
+    # Convert YouTube links to embedded links
+    @embed_link = @video.uri.gsub! 'www.youtube.com/watch', 'www.youtube.com/embed'
   end
 
   # GET /videos/new

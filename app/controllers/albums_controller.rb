@@ -8,6 +8,14 @@ class AlbumsController < ApplicationController
 
   # GET /Albums/1 or /Albums/1.json
   def show
+    # Album artists as string
+    @album_artists = ''
+    @album.artists.each_with_index do |artist, i|
+      @album_artists += artist.name
+      @album_artists += i + 1 < @album.artists.count ? ', ' : ''
+    end
+
+    @image_exists = image_exists?(@album.imageuri)
   end
 
   # GET /Albums/new
@@ -58,13 +66,14 @@ class AlbumsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_album
-      @album = Album.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def album_params
-      params.require(:album).permit(:id, :year, :title, :country, :notes)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_album
+    @album = Album.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def album_params
+    params.require(:album).permit(:id, :year, :title, :country, :notes)
+  end
 end
