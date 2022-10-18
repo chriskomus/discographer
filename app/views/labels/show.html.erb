@@ -1,8 +1,45 @@
-<%= render @label %>
+<%= render 'layouts/heading', heading: @label.name %>
+
+<div class="container">
+  <div class="row">
+    <% unless @label.imageuri.blank? %>
+      <div class="col">
+        <div class="card">
+          <img class="card-img-top" src="<%= @label.imageuri %>" alt="<%= @label.title %>">
+        </div>
+      </div>
+    <% end %>
+    <div class="col">
+      <p><%= @label.profile %></p>
+      <a href="https://www.discogs.com/label/<%= @label.discogs_id %>" class="btn btn-xs btn-secondary" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i>
+        Discogs</a>
+    </div>
+  </div>
+</div>
+
+<%= render 'layouts/heading' %>
+
+<!-- Grid Items-->
+<h4 class="text-center text-uppercase text-secondary mb-0">Artists</h4>
+<div class="row justify-content-center mt-5" id="genres">
+  <% @label.artists.each do |artist| %>
+    <%= render artist %>
+  <% end %>
+</div>
+
+<%= render 'layouts/heading' %>
+
+<!-- Grid Items-->
+<h4 class="text-center text-uppercase text-secondary mb-0">Albums</h4>
+<div class="row justify-content-center mt-5" id="albums">
+  <% @label.albums.each do |album| %>
+    <%= render album %>
+  <% end %>
+</div>
+
 
 <div>
-  <%= link_to "Edit this label", edit_label_path(@label) %> |
-  <%= link_to "Back to labels", labels_path %>
-
-  <%= button_to "Destroy this label", @label, method: :delete %>
+  <%= link_to "Edit this label", edit_label_path(@label), class: "btn btn-md btn-secondary m-2" %>
+  <%= link_to "Back to labels", labels_path, class: "btn btn-md btn-secondary m-2" %>
+  <%= button_to "Destroy this label", @label, method: :delete, class: "btn btn-md btn-danger m-2" %>
 </div>

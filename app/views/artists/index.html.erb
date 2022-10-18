@@ -1,31 +1,13 @@
-<section class="page-section tile">
-  <div class="container">
-    <!-- Heading-->
-    <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Artists</h2>
-    <!-- Icon Divider-->
-    <div class="divider-custom">
-      <div class="divider-custom-line"></div>
-      <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-      <div class="divider-custom-line"></div>
-    </div>
-      <!-- Add New Button-->
-      <div class="text-center mt-4">
-        <%= link_to '<i class="fa-solid fa-plus"></i> New Artist'.html_safe, new_artist_path, class: "btn btn-xl btn-outline-primary" %>
-      </div>
+<%= render 'layouts/heading', heading: "Artists" %>
 
-    <!-- Grid Items-->
-    <div class="row justify-content-center mt-5" id="artists">
-      <% @artists.each do |artist| %>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <div class="tile-item mx-auto" data-bs-toggle="modal" data-bs-target="#modal<%= artist.id %>">
-              <%= link_to '<div class="tile-item-caption d-flex align-items-center justify-content-center h-100 w-100"><div class="tile-item-caption-content text-center text-white"><i class="fa-sharp fa-solid fa-eye"></i></div></div>'.html_safe, artist %>
-            <h3><%= artist.name %></h3>
-            <p><%= truncate(artist.profile, length: 100) %></p>
-            <img class="img-fluid" src="<%= artist.imageuri %>" alt="<%= artist.name %>"/>
+<!-- Add New Button-->
+<div class="text-center mt-4">
+  <%= link_to '<i class="fa-solid fa-plus"></i> New Artist'.html_safe, new_artist_path, class: "btn btn-xl btn-outline-primary" %>
+</div>
 
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</section>
+<!-- Grid Items-->
+<div class="row justify-content-center mt-5" id="artists">
+  <% @artists.each do |artist| %>
+    <%= render artist %>
+  <% end %>
+</div>

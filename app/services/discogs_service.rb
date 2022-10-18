@@ -1,12 +1,7 @@
-require "discogs"
-require 'logger'
-require 'tmpdir'
-user_token = "UVHUjZHYJrClanUtJWdzVCUHXvPdDpwppwPgSyWJ"
-
 ##
 # This class represents the import functions to bring data from Discogs' API
 # and save it to the database.
-class ImportDiscogs
+class DiscogsService
   def initialize(user_token)
     # Set user token and discogs wrapper
     @user_token = user_token
@@ -450,22 +445,3 @@ class ImportDiscogs
     response
   end
 end
-
-# Seed data
-artists = [22673, 99459, 45, 269, 62447, 1028023] # shpongle, carbon based lifeforms, aphex twin, squarepusher, younger brother, igorrr
-labels = [3336, 925, 25386, 1504, 467138] # twisted records, platipus,  hyperdub, ad noiseum, leftfield
-
-# Test data
-artists = []
-labels = [467138]
-
-import_discogs = ImportDiscogs.new(user_token)
-
-import_discogs.clear_database(true)
-
-import_discogs.seed_database(artists, labels)
-
-# import_discogs.create_or_get_album(42861)
-
-import_discogs.log_generated_count
-import_discogs.log_database_count
