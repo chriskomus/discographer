@@ -14,8 +14,6 @@ class AlbumsController < ApplicationController
       @album_artists += artist.name
       @album_artists += i + 1 < @album.artists.count ? ', ' : ''
     end
-
-    @image_exists = image_exists?(@album.imageuri)
   end
 
   # GET /Albums/new
@@ -74,6 +72,6 @@ class AlbumsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def album_params
-    params.require(:album).permit(:id, :year, :title, :country, :notes)
+    params.require(:album).permit(:id, :year, :title, :country, :notes, :imageuri, :discogs_id)
   end
 end

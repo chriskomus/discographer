@@ -4,9 +4,11 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <div class="card">
-          <img class="card-img-top" src="<%= @album.imageuri %>" alt="<%= @album.title %>">
-        </div>
+        <% unless @album.imageuri.blank? %>
+          <div class="card">
+            <img class="card-img-top" src="<%= @album.imageuri %>" alt="<%= @album.title %>">
+          </div>
+        <% end %>
         <h4 class="mt-3">Videos:</h4>
         <div class="row justify-content-center m-2" id="videos">
           <%= render @album.videos %>
@@ -61,10 +63,9 @@
           </tr>
           </thead>
           <tbody>
-            <%= render @album.tracks %>
+          <%= render @album.tracks %>
           </tbody>
         </table>
-
 
 
       </div>

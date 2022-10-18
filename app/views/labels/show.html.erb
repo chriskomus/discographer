@@ -2,11 +2,13 @@
 
 <div class="container">
   <div class="row">
-    <div class="col">
-      <div class="card">
-        <img class="card-img-top" src="<%= @label.imageuri %>" alt="<%= @label.name %>">
+    <% unless @label.imageuri.blank? %>
+      <div class="col">
+        <div class="card">
+          <img class="card-img-top" src="<%= @label.imageuri %>" alt="<%= @label.title %>">
+        </div>
       </div>
-    </div>
+    <% end %>
     <div class="col">
       <p><%= @label.profile %></p>
       <a href="https://www.discogs.com/label/<%= @label.discogs_id %>" class="btn btn-xs btn-secondary" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i>

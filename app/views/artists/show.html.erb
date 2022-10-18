@@ -2,11 +2,13 @@
 
 <div class="container">
   <div class="row">
-    <div class="col">
-      <div class="card">
-        <img class="card-img-top" src="<%= @artist.imageuri %>" alt="<%= @artist.name %>">
+    <% unless @artist.imageuri.blank? %>
+      <div class="col">
+        <div class="card">
+          <img class="card-img-top" src="<%= @artist.imageuri %>" alt="<%= @artist.title %>">
+        </div>
       </div>
-    </div>
+    <% end %>
     <div class="col">
       <p><%= @artist.profile %></p>
       <a href="https://www.discogs.com/artist/<%= @artist.discogs_id %>" class="btn btn-xs btn-secondary" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i>

@@ -12,7 +12,7 @@
         <span class="badge rounded-pill bg-light text-dark"><%= release.catno %></span>
       <% end %>
     </p>
-    <% if @image_exists %>
+    <% unless album.imageuri.blank? %>
       <img class="img-fluid" src="<%= album.imageuri %>" alt="<%= album.title %>"/>
     <% end %>
   </div>
