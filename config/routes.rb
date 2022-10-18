@@ -13,5 +13,6 @@ Rails.application.routes.draw do
   resources :albums
   resources :labels
   resources :artists
+  resources :releases
   root "welcome#index"
 end

@@ -1,10 +1,61 @@
-<p style="color: green"><%= notice %></p>
+<%= render 'layouts/heading', heading: "#{@release.catno}: #{artists_as_string(@release.album)} - #{@release.album.title}" %>
 
-<%= render @release %>
+<div class="container mb-3">
+  <div class="row">
+    <div class="col">
+      <% unless @release.album.imageuri.blank? %>
+        <div class="card">
+          <img class="card-img-top" src="<%= @release.album.imageuri %>" alt="<%= @release.album.title %>">
+        </div>
+      <% end %>
+    </div>
+    <div class="col">
+      <h4>Album:</h4>
+      <h5>
+        <span class="badge rounded-pill bg-light text-dark"><%= link_to @release.album.title, @release.album %></span>
+      </h5>
+
+      <h4>Artist<%= @release.album.artists.count > 1 ? "s" : "" %>:</h4>
+      <h5>
+        <% @release.album.artists.each do |artist| %>
+          <span class="badge rounded-pill bg-light text-dark"><%= link_to artist.name, artist %></span>
+        <% end %>
+      </h5>
+
+      <h4>Label:</h4>
+      <h5>
+        <span class="badge rounded-pill bg-light text-dark"><%= link_to @release.label.name, @release.label %></span>
+      </h5>
+
+      <h4>Catalog Number:</h4>
+      <h5>
+        <%= @release.catno %>
+      </h5>
+    </div>
+  </div>
+</div>
+
+<%= render 'layouts/heading' %>
+<h4 class="text-center text-uppercase text-secondary mb-0">Other Releases of This Album</h4>
+
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Catalog No</th>
+    <th scope="col">Album</th>
+    <th scope="col">Label</th>
+    <th><i class="fa-solid fa-pencil"></i></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @release.album.releases.each do |release| %>
+    <%= render release %>
+  <% end %>
+  </tbody>
+</table>
 
 <div>
-  <%= link_to "Edit this release", edit_release_path(@release) %> |
-  <%= link_to "Back to releases", releases_path %>
-
-  <%= button_to "Destroy this release", @release, method: :delete %>
+  <%= link_to "Edit this release", edit_release_path(@release), class: "btn btn-md btn-secondary m-2" %>
+  <%= link_to "Back to releases", releases_path, class: "btn btn-md btn-secondary m-2" %>
+  <%= button_to "Destroy this release", @release, method: :delete, class: "btn btn-md btn-danger m-2" %>
 </div>

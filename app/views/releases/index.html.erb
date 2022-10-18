@@ -1,14 +1,53 @@
-<p style="color: green"><%= notice %></p>
+<%= render 'layouts/heading', heading: @header %>
 
-<h1>Releases</h1>
+<% if @album.present? %>
+  <div class="container mb-3">
+    <div class="row">
+      <div class="col">
+        <% unless @album.imageuri.blank? %>
+          <div class="card">
+            <img class="card-img-top" src="<%= @album.imageuri %>" alt="<%= @album.title %>">
+          </div>
+        <% end %>
+      </div>
+      <div class="col">
+        <h4>Album:</h4>
+        <h5>
+          <span class="badge rounded-pill bg-light text-dark"><%= link_to @album.title, @album %></span>
+        </h5>
 
-<div id="releases">
-  <% @releases.each do |release| %>
-    <%= render release %>
-    <p>
-      <%= link_to "Show this release", release %>
-    </p>
+        <h4>Artist<%= @album.artists.count > 1 ? "s" : "" %>:</h4>
+        <h5>
+          <% @album.artists.each do |artist| %>
+            <span class="badge rounded-pill bg-light text-dark"><%= link_to artist.name, artist %></span>
+          <% end %>
+        </h5>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Add New Button-->
+<div class="text-center mt-4">
+  <% if @album.present? %>
+    <%= link_to '<i class="fa-solid fa-plus"></i> New Release'.html_safe, new_release_path(:album_id => @album.id), class: "btn btn-xl btn-outline-primary" %>
+  <% else %>
+    <%= link_to '<i class="fa-solid fa-plus"></i> New Release'.html_safe, new_release_path, class: "btn btn-xl btn-outline-primary" %>
   <% end %>
 </div>
 
-<%= link_to "New release", new_release_path %>
+<table class="table table-hover mt-5">
+  <thead>
+  <tr>
+    <th scope="col">Catalog No</th>
+    <th>Album</th>
+    <th>Label</th>
+    <th><i class="fa-solid fa-pencil"></i></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @releases.each do |release| %>
+    <%= render release %>
+  <% end %>
+  </tbody>
+</table>

@@ -3,7 +3,18 @@ class VideosController < ApplicationController
 
   # GET /videos or /videos.json
   def index
-    @videos = Video.all
+    @album = nil
+    if params[:album_id].present?
+      @album = Album.find_by_id(params[:album_id])
+      if @album.present?
+        @header = "Videos: #{@album.title}"
+        @videos = Video.where(album: @album)
+      end
+    else
+      @header = 'Select an album to see videos'
+      @videos = Video.all
+      @albums = Album.all
+    end
   end
 
   # GET /videos/1 or /videos/1.json
@@ -15,6 +26,13 @@ class VideosController < ApplicationController
   # GET /videos/new
   def new
     @video = Video.new
+    @header = 'New Video'
+    if params[:album_id].present?
+      @album = Album.find_by_id(params[:album_id])
+      if @album.present?
+        @header = "Add Video to: #{@album.title}"
+      end
+    end
   end
 
   # GET /videos/1/edit
@@ -67,6 +85,6 @@ class VideosController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def video_params
-      params.require(:video).permit(:id, :title, :uri, :description)
+      params.require(:video).permit(:id, :title, :uri, :description, :album_id)
     end
 end

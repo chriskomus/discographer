@@ -1,5 +1,11 @@
-<div class="col-sm-4 col-lg-6 mb-5" id="<%= dom_id video %>">
-  <%= video.title %>
-  <% embed_link = video.uri.gsub! 'www.youtube.com/watch?v=', 'www.youtube.com/embed/' %>
-  <iframe src='<%= embed_link %>?rel=0&autoplay=<%= params[:autoplay] || 0 %>' allowfullscreen></iframe>
+<div class="col-sm-4 col-lg-6 mb-3" id="<%= dom_id video %>">
+  <div class="card">
+    <% embed_link = video.uri.gsub! 'www.youtube.com/watch?v=', 'www.youtube.com/embed/' %>
+    <iframe src='<%= embed_link %>?rel=0&autoplay=<%= params[:autoplay] || 0 %>' allowfullscreen></iframe>
+    <div class="card-body">
+      <h5 class="card-title"><%= video.title %></h5>
+      <p class="card-text"><%= link_to '<i class="fa-solid fa-pencil"></i>'.html_safe, edit_video_path(video), class: "btn btn-xs btn-primary" %>
+        <%= link_to '<i class="fa-solid fa-delete-left"></i>'.html_safe, @video, method: :delete, class: "btn btn-xs btn-danger" %></p>
+    </div>
+  </div>
 </div>

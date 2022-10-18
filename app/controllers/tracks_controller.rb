@@ -3,7 +3,17 @@ class TracksController < ApplicationController
 
   # GET /tracks or /tracks.json
   def index
-    @tracks = Track.all
+    @album = nil
+    if params[:album_id].present?
+      @album = Album.find_by_id(params[:album_id])
+      if @album.present?
+        @header = "Tracks: #{@album.title}"
+        @tracks = Track.where(album: @album)
+      end
+    else
+      @header = 'All Tracks'
+      @tracks = Track.all
+    end
   end
 
   # GET /tracks/1 or /tracks/1.json
@@ -13,6 +23,13 @@ class TracksController < ApplicationController
   # GET /tracks/new
   def new
     @track = Track.new
+    @header = 'New Track'
+    if params[:album_id].present?
+      @album = Album.find_by_id(params[:album_id])
+      if @album.present?
+        @header = "Add Track to: #{@album.title}"
+      end
+    end
   end
 
   # GET /tracks/1/edit
@@ -65,6 +82,6 @@ class TracksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def track_params
-      params.require(:track).permit(:id, :position, :title, :duration)
+      params.require(:track).permit(:id, :position, :title, :duration, :album_id)
     end
 end
