@@ -1,24 +1,54 @@
-<!-- Heading-->
-<h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Tracks</h2>
-<!-- Icon Divider-->
-<div class="divider-custom">
-  <div class="divider-custom-line"></div>
-  <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-  <div class="divider-custom-line"></div>
-</div>
+<%= render 'layouts/heading', heading: @header %>
+
+<% if @album.present? %>
+  <div class="container mb-3">
+    <div class="row">
+      <div class="col">
+        <% unless @album.imageuri.blank? %>
+          <div class="card">
+            <img class="card-img-top" src="<%= @album.imageuri %>" alt="<%= @album.title %>">
+          </div>
+        <% end %>
+      </div>
+      <div class="col">
+        <h4>Album:</h4>
+        <h5>
+          <span class="badge rounded-pill bg-light text-dark"><%= link_to @album.title, @album %></span>
+        </h5>
+
+        <h4>Artist<%= @album.artists.count > 1 ? "s" : "" %>:</h4>
+        <h5>
+          <% @album.artists.each do |artist| %>
+            <span class="badge rounded-pill bg-light text-dark"><%= link_to artist.name, artist %></span>
+          <% end %>
+        </h5>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <!-- Add New Button-->
 <div class="text-center mt-4">
-  <%= link_to '<i class="fa-solid fa-plus"></i> New Track'.html_safe, new_track_path, class: "btn btn-xl btn-outline-primary" %>
+  <% if @album.present? %>
+    <%= link_to '<i class="fa-solid fa-plus"></i> Add Track'.html_safe, new_track_path(:album_id => @album.id), class: "btn btn-xl btn-outline-primary" %>
+  <% else %>
+    <%= link_to '<i class="fa-solid fa-plus"></i> New Track'.html_safe, new_track_path, class: "btn btn-xl btn-outline-primary" %>
+  <% end %>
 </div>
 
 <table class="table table-hover mt-5">
   <thead>
   <tr>
-    <th scope="col">Position</th>
-    <th scope="col">Artist</th>
-    <th scope="col">Title</th>
-    <th scope="col">Album</th>
-    <th scope="col">Duration</th>
+    <% unless params[:album_id].present? %>
+      <th scope="col">Album</th>
+    <% end %>
+    <th>Position</th>
+    <% unless params[:album_id].present? %>
+      <th>Artist</th>
+    <% end %>
+    <th>Title</th>
+    <th>Duration</th>
+    <th><i class="fa-solid fa-pencil"></i></th>
   </tr>
   </thead>
   <tbody>

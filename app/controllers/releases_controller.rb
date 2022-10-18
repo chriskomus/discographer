@@ -3,7 +3,17 @@ class ReleasesController < ApplicationController
 
   # GET /releases or /releases.json
   def index
-    @releases = Release.all
+    @album = nil
+    if params[:album_id].present?
+      @album = Album.find_by_id(params[:album_id])
+      if @album.present?
+        @header = "Releases: #{@album.title}"
+        @releases = Release.where(album: @album)
+      end
+    else
+      @header = 'Releases'
+      @releases = Release.all
+    end
   end
 
   # GET /releases/1 or /releases/1.json
@@ -13,6 +23,13 @@ class ReleasesController < ApplicationController
   # GET /releases/new
   def new
     @release = Release.new
+    @header = 'New Release'
+    if params[:album_id].present?
+      @album = Album.find_by_id(params[:album_id])
+      if @album.present?
+        @header = "Add Release: #{@album.title}"
+      end
+    end
   end
 
   # GET /releases/1/edit
@@ -65,6 +82,6 @@ class ReleasesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def release_params
-      params.fetch(:release, {})
+      params.require(:release).permit(:id, :catno, :album_id, :label_id)
     end
 end

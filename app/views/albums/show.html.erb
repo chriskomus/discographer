@@ -1,5 +1,5 @@
 <div id="<%= dom_id @album %>">
-  <%= render 'layouts/heading', heading: "#{@album_artists} - #{@album.title}" %>
+  <%= render 'layouts/heading', heading: "#{artists_as_string(@album)} - #{@album.title}" %>
 
   <div class="container">
     <div class="row">
@@ -13,6 +13,8 @@
         <div class="row justify-content-center m-2" id="videos">
           <%= render @album.videos %>
         </div>
+        <%= link_to '<i class="fa-solid fa-pencil"></i>'.html_safe, videos_path(:album_id => @album.id), class: "btn btn-xs btn-primary mb-2" %>
+        <%= link_to '<i class="fa-solid fa-plus"></i>'.html_safe, new_video_path(:album_id => @album.id), class: "btn btn-xs btn-outline-primary mb-2" %>
       </div>
       <div class="col">
         <h4>Artist<%= @album.artists.count > 1 ? "s" : "" %>:</h4>
@@ -25,9 +27,11 @@
         <h4>Release<%= @album.releases.count > 1 ? "s" : "" %>:</h4>
         <h5>
           <% @album.releases.each do |release| %>
-            <span class="badge rounded-pill bg-light text-dark"><%= link_to "#{release.label.name} - #{release.catno}", release.label %></span>
+            <span class="badge rounded-pill bg-light text-dark"><%= link_to "#{release.label.name} - #{release.catno}", release %></span>
           <% end %>
         </h5>
+        <%= link_to '<i class="fa-solid fa-pencil"></i>'.html_safe, releases_path(:album_id => @album.id), class: "btn btn-xs btn-primary mb-2" %>
+        <%= link_to '<i class="fa-solid fa-plus"></i>'.html_safe, new_release_path(:album_id => @album.id), class: "btn btn-xs btn-outline-primary mb-2" %>
 
         <h4>Label<%= @album.labels.count > 1 ? "s" : "" %>:</h4>
         <h5>
@@ -57,15 +61,18 @@
         <table class="table">
           <thead>
           <tr>
-            <th scope="col">Position</th>
-            <th scope="col">Title</th>
-            <th scope="col">Duration</th>
+            <th>Position</th>
+            <th>Title</th>
+            <th>Duration</th>
+            <th><i class="fa-solid fa-pencil"></i></th>
           </tr>
           </thead>
           <tbody>
           <%= render @album.tracks %>
           </tbody>
         </table>
+        <%= link_to '<i class="fa-solid fa-pencil"></i>'.html_safe, tracks_path(:album_id => @album.id), class: "btn btn-xs btn-primary mb-2" %>
+        <%= link_to '<i class="fa-solid fa-plus"></i>'.html_safe, new_track_path(:album_id => @album.id), class: "btn btn-xs btn-outline-primary mb-2" %>
 
 
       </div>

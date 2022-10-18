@@ -1,12 +1,16 @@
-<!--<div id="<%#= dom_id track %>">-->
-<!--  <p><%#= track.position.nil? || track.position == 0 ? "" : "#{track.position}. " %><%= track.title %><%= track.position.empty? ? "" : " - #{track.duration}" %></p>-->
-<!--</div>-->
-
-
 <tr id="<%= dom_id track %>">
+  <% if params[:action] == 'index' && params[:album_id].nil? %>
+    <td><%= link_to track.album.title, track.album %></td>
+  <% end %>
   <th scope="row"><%= track.position.nil? || track.position == 0 ? "" : "#{track.position}" %></th>
-  <% if params[:action] == 'index' %><td><%= link_to track.album.artists[0].name, track.album.artists[0] %></td><% end %>
+  <% if params[:action] == 'index' && params[:album_id].nil? %>
+    <td><%= artists_as_string(track.album) %></td>
+  <% end %>
   <td><%= track.title %></td>
-    <% if params[:action] == 'index' %><td><%= link_to track.album.title, track.album %></td><% end %>
+
   <td><%= track.duration.empty? ? "" : "#{track.duration}" %></td>
+  <td>
+    <%= link_to '<i class="fa-solid fa-pencil"></i>'.html_safe, edit_track_path(track), class: "badge-pill badge badge-secondary" %>
+    <%= link_to '<i class="fa-solid fa-delete-left"></i>'.html_safe, @track, method: :delete, class: "badge-pill badge badge-danger" %>
+  </td>
 </tr>

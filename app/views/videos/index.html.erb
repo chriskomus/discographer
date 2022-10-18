@@ -1,13 +1,49 @@
-<%= render 'layouts/heading', heading: "Videos" %>
+<%= render 'layouts/heading', heading: @header %>
+
+<% if @album.present? %>
+  <div class="container mb-3">
+    <div class="row">
+      <div class="col">
+        <% unless @album.imageuri.blank? %>
+          <div class="card">
+            <img class="card-img-top" src="<%= @album.imageuri %>" alt="<%= @album.title %>">
+          </div>
+        <% end %>
+      </div>
+      <div class="col">
+        <h4>Album:</h4>
+        <h5>
+          <span class="badge rounded-pill bg-light text-dark"><%= link_to @album.title, @album %></span>
+        </h5>
+
+        <h4>Artist<%= @album.artists.count > 1 ? "s" : "" %>:</h4>
+        <h5>
+          <% @album.artists.each do |artist| %>
+            <span class="badge rounded-pill bg-light text-dark"><%= link_to artist.name, artist %></span>
+          <% end %>
+        </h5>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <!-- Add New Button-->
 <div class="text-center mt-4">
-  <%= link_to '<i class="fa-solid fa-plus"></i> New Label'.html_safe, new_video_path, class: "btn btn-xl btn-outline-primary" %>
+  <% if @album.present? %>
+    <%= link_to '<i class="fa-solid fa-plus"></i> Add Video'.html_safe, new_video_path(:album_id => @album.id), class: "btn btn-xl btn-outline-primary" %>
+  <% else %>
+    <%= link_to '<i class="fa-solid fa-plus"></i> New Video'.html_safe, new_video_path, class: "btn btn-xl btn-outline-primary" %>
+  <% end %>
 </div>
-
 <!-- Grid Items-->
 <div class="row justify-content-center mt-5" id="videos">
-  <% @videos.each do |video| %>
-    <%= render video %>
+  <% if @album.present? %>
+    <% @videos.each do |video| %>
+      <%= render video %>
+    <% end %>
+  <% else %>
+    <% if defined?(@albums) %>
+      <%= render @albums %>
+    <% end %>
   <% end %>
 </div>

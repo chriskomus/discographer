@@ -1,2 +1,6 @@
-<div id="<%= dom_id release %>">
-</div>
+<tr id="<%= dom_id release %>">
+  <th scope="row"><%= link_to release.catno, release %></th>
+  <td><%= link_to release.album.title, release.album %></td>
+  <td><%= link_to release.label.name, release.label %></td>
+  <td><%= link_to '<i class="fa-solid fa-pencil"></i>'.html_safe, edit_release_path(release), class: "badge-pill badge badge-secondary" %></td>
+</tr>

@@ -13,20 +13,25 @@
 
   <div>
     <%= form.label :position, style: "display: block" %>
-    <%= form.number_field :position %>
+    <%= form.text_field :position, :class => 'form-control' %>
   </div>
 
   <div>
     <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
+    <%= form.text_field :title, :class => 'form-control' %>
   </div>
 
   <div>
     <%= form.label :duration, style: "display: block" %>
-    <%= form.text_field :duration %>
+    <%= form.text_field :duration, :class => 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :album %>
+    <%= form.collection_select(:album_id, Album.all, :id, :title, { :prompt => "Please Select...", :selected => params[:album_id] || track.album_id }, { :class => 'form-control' }) %>
   </div>
 
   <div>
-    <%= form.submit %>
+    <%= form.submit 'Submit', class: "btn btn-md btn-secondary mt-2" %>
   </div>
 <% end %>
