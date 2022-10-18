@@ -23,6 +23,7 @@ class AlbumsController < ApplicationController
 
   # GET /Albums/1/edit
   def edit
+
   end
 
   # POST /Albums or /Albums.json
@@ -42,6 +43,8 @@ class AlbumsController < ApplicationController
 
   # PATCH/PUT /Albums/1 or /Albums/1.json
   def update
+
+
     respond_to do |format|
       if @album.update(album_params)
         format.html { redirect_to album_url(@album), notice: "Album was successfully updated." }
@@ -72,6 +75,7 @@ class AlbumsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def album_params
-    params.require(:album).permit(:id, :year, :title, :country, :notes, :imageuri, :discogs_id)
+    params.require(:album).permit(:id, :year, :title, :country, :notes, :imageuri, :discogs_id, :artist_ids => [])
   end
+
 end

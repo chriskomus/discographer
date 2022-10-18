@@ -1,5 +1,5 @@
 <div class="col-sm-4 col-lg-6 mb-5" id="<%= dom_id video %>">
   <%= video.title %>
   <% embed_link = video.uri.gsub! 'www.youtube.com/watch?v=', 'www.youtube.com/embed/' %>
-  <iframe src='<%= embed_link %>?rel=0&autoplay=<%= params[:autoplay] || 0 %>' frameborder='0' allowfullscreen></iframe>
+  <iframe src='<%= embed_link %>?rel=0&autoplay=<%= params[:autoplay] || 0 %>' allowfullscreen></iframe>
 </div>
