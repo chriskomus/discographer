@@ -1,8 +1,7 @@
 class TestsController < ApplicationController
 
   before_action do
-    @discogs = Discogs::Wrapper.new('AlbumCatalog', access_token: session[:access_token])
-
+    @discogs = Discogs::Wrapper.new(ENV['APP_NAME'], access_token: session[:access_token])
     @base_uri = 'https://api.discogs.com'
   end
 
@@ -15,7 +14,7 @@ class TestsController < ApplicationController
   def authenticate
     app_key = ENV["DISCOGS_API_KEY"]
     app_secret = ENV["DISCOGS_API_SECRET"]
-    callback = "http://127.0.0.1:3000/tests/callback"
+    callback = ENV["CALLBACK_URI"]
 
     request_data = @discogs.get_request_token(app_key, app_secret, callback)
 
@@ -57,7 +56,7 @@ class TestsController < ApplicationController
   ##
   # Testing for basic discogs wrapper, authenticated so images will load
   def artist_albums
-    wrapper = Discogs::Wrapper.new('AlbumCatalog', access_token: session[:access_token])
+    wrapper = Discogs::Wrapper.new(ENV['APP_NAME'], access_token: session[:access_token])
     arr = [22673, 99459, 45, 269] # shpongle, carbon based lifeforms, aphex twin, squarepusher
     artist_id = arr[3]
 

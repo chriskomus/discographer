@@ -51,7 +51,7 @@
         <p><strong>Country:</strong> <%= @album.country %></p>
 
         <a href="https://www.discogs.com/release/<%= @album.discogs_id %>" class="btn btn-xs btn-secondary" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i>
-          Discogs</a>
+          View on Discogs</a>
 
         <%= render 'layouts/heading' %>
 
@@ -78,6 +78,9 @@
       </div>
     </div>
   </div>
+
+  <%= link_to '<i class="fa-solid fa-image"></i> Import album info'.html_safe, {controller: "import", action: "import_album_info", album_id: @album.id}, class: "btn btn-md btn-secondary m-2" %>
+  <%= link_to '<i class="fa-solid fa-cloud-arrow-down"></i> Import album art'.html_safe, edit_album_path(:album_id => @album.id), class: "btn btn-md btn-secondary m-2" %>
 
   <%= link_to "Edit this album", edit_album_path(@album), class: "btn btn-md btn-secondary m-2" %>
   <%= link_to "Back to albums", albums_path, class: "btn btn-md btn-secondary m-2" %>

@@ -1,0 +1,20 @@
+<%= render 'layouts/heading', heading: 'User Info' %>
+<p class="text-center">If everything is working, your username should be displayed.</p>
+
+<% if @user.present? %>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h4 class="text-uppercase text-secondary mb-4">Username: <%= @user.username %></h4>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <p><strong>You are not authenticated with Discogs.</strong> <a href="/import/authenticate">Authenticate Discogs.com account</a></p>
+      </div>
+    </div>
+  </div>
+<% end %>

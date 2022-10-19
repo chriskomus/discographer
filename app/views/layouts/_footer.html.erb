@@ -3,16 +3,22 @@
   <div class="container">
     <div class="row">
       <!-- Footer Location-->
-      <div class="col-lg-6">
+      <div class="col-lg-4">
         <h4 class="text-uppercase mb-4">About</h4>
-        <p class="lead"><%= link_to 'About the Data'.html_safe, about_path %></p>
-        <p class="lead"><%= link_to 'ERD'.html_safe, erd_path %></p>
+        <p class="lead"><%= link_to 'About the Data', about_path %></p>
+        <p class="lead"><%= link_to 'ERD', erd_path %></p>
       </div>
-      <div class="col-lg-6">
-        <h4 class="text-uppercase mb-4">More</h4>
-        <p class="lead"><%= link_to 'Releases'.html_safe, releases_path %></p>
-        <p class="lead"><%= link_to 'Tracks'.html_safe, tracks_path %></p>
-        <p class="lead"><%= link_to 'Videos'.html_safe, videos_path %></p>
+      <div class="col-lg-4">
+        <h4 class="text-uppercase mb-4">More Info</h4>
+        <p class="lead"><%= link_to 'Releases', releases_path %></p>
+        <p class="lead"><%= link_to 'Tracks', tracks_path %></p>
+        <p class="lead"><%= link_to 'Videos', videos_path %></p>
+      </div>
+      <div class="col-lg-4">
+        <h4 class="text-uppercase mb-4">Discogs</h4>
+        <p class="lead"><%= link_to 'Import', '/import/index' %></p>
+        <p class="lead"><%= link_to 'Test Connection', '/import/test_connection' %></p>
+        <p class="lead"><%= link_to 'User Info', '/import/user_info' %></p>
       </div>
     </div>
   </div>

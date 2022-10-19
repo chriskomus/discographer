@@ -1,11 +1,25 @@
 ##
-# This class represents the import functions to bring data from Discogs' API
-# and save it to the database.
+# # ./app/services/discogs_service.rb
+#
+# This service imports data from Discogs' API and save it to the database.
+#
+# This service requires "discogs-wrapper"
+# Add to Gemfile:
+# gem "discogs-wrapper"
+#
+# Call it from the controller:
+# discogs_service = DiscogsService.new(@discogs)
+#
+# When initializing DiscogsService, provide an authenticated Discogs::Wrapper object:
+# @wrapper = Discogs::Wrapper.new(ENV['APP_NAME'], access_token: access_token)
+# -
+# To authenticate in the browser, call the authenticate function from the import controller
 class DiscogsService
-  def initialize(user_token)
-    # Set user token and discogs wrapper
-    @user_token = user_token
-    @wrapper = Discogs::Wrapper.new('AlbumCatalog', user_token: @user_token)
+  ##
+  # Provide a Discogs::Wrapper object from the discg
+  # @param wrapper: @wrapper = Discogs::Wrapper.new(ENV['APP_NAME'], access_token: access_token)
+  def initialize(wrapper)
+    @wrapper = wrapper
 
     # Create logging
     log_file = "log/debug.log"
@@ -24,7 +38,6 @@ class DiscogsService
   # Seed the database with all Albums from an array of artists or an array of labels
   # @param artists - An array of Discogs Artist id #s
   # @param labels - An array of Discogs Label id #s
-  # @param dump_data - If true the entire database will be cleared before seeding
   def seed_database(artists, labels)
     # iterate through each label
     labels.each_with_index do |id, i|
@@ -129,6 +142,7 @@ class DiscogsService
         item.year = album.year
         item.country = album.country
         item.discogs_id = album.id
+        item.imageuri = album.images.find_all { |img| img.type == 'primary' || img.type == 'secondary'}[0].uri
       }
 
       # Get album's labels and iterate through them, adding to database
@@ -236,6 +250,7 @@ class DiscogsService
         item.name = label.name
         item.profile = label.profile
         item.discogs_id = label.id
+        item.imageuri = label.images.find_all { |img| img.type == 'primary' || img.type == 'secondary'}[0].uri
       }
     end
   end
@@ -259,6 +274,7 @@ class DiscogsService
         item.name = artist.name
         item.profile = artist.profile
         item.discogs_id = artist.id
+        item.imageuri = artist.images.find_all { |img| img.type == 'primary' || img.type == 'secondary'}[0].uri
       }
     end
   end

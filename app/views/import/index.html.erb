@@ -1,0 +1,16 @@
+<%= render 'layouts/heading', heading: 'Import from Discogs' %>
+
+
+
+<% if @discogs.authenticated? %>
+  authenticated
+<% else %>
+  <ul>
+    <li>Do <strong>not</strong> use localhost. Use <a href="http://127.0.0.1:3000/">127.0.0.1</a> or another valid address to prevent session issues.</li>
+    <li>Create an app on Discogs.com via your <a href="https://www.discogs.com/settings/developers" target="_blank">developer console</a>.</li>
+    <li>Add your "Consumer Key" and "Consumer Secret" into /config/environment_variables.yml</li>
+  </ul>
+
+  <a href="/import/authenticate">Authenticate Discogs.com account</a>
+<% end %>
+
