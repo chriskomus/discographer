@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_16_232015) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_19_205420) do
   create_table "albums", force: :cascade do |t|
     t.integer "year"
     t.string "title", null: false
@@ -20,7 +20,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_16_232015) do
     t.datetime "updated_at", null: false
     t.string "imageuri"
     t.integer "discogs_id"
-    t.string "catalog_num"
   end
 
   create_table "albums_artists", id: false, force: :cascade do |t|
@@ -71,6 +70,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_16_232015) do
     t.string "catno"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "label_id", null: false
+    t.integer "album_id", null: false
+  end
+
+  create_table "searches", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -83,7 +89,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_16_232015) do
   end
 
   create_table "tracks", force: :cascade do |t|
-    t.integer "position"
+    t.string "position"
     t.string "title", null: false
     t.string "duration"
     t.datetime "created_at", null: false
@@ -110,6 +116,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_16_232015) do
   add_foreign_key "albums_labels", "labels", primary_key: "id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "artists_labels", "artists", primary_key: "id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "artists_labels", "labels", primary_key: "id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tracks", "albums", primary_key: "id"
-  add_foreign_key "videos", "albums", primary_key: "id"
+  add_foreign_key "releases", "albums", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "releases", "labels", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tracks", "albums", primary_key: "id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "videos", "albums", primary_key: "id", on_update: :cascade, on_delete: :cascade
 end

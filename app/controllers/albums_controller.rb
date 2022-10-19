@@ -3,7 +3,8 @@ class AlbumsController < ApplicationController
 
   # GET /Albums or /Albums.json
   def index
-    @albums = Album.all
+    # @albums = Album.all
+    @albums = Album.search(params[:search])
   end
 
   # GET /Albums/1 or /Albums/1.json
@@ -75,7 +76,7 @@ class AlbumsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def album_params
-    params.require(:album).permit(:id, :year, :title, :country, :notes, :imageuri, :discogs_id, :artist_ids => [], :genre_ids => [])
+    params.require(:album).permit(:id, :year, :title, :country, :notes, :imageuri, :discogs_id, :search, :artist_ids => [], :genre_ids => [])
   end
 
 end
