@@ -13,6 +13,16 @@
     <p class="masthead-subheading font-weight-light mb-0">Import an artist or record label's entire discography from Discogs' API.</p>
     <p class="masthead-subheading font-weight-light mb-0">Import individual albums from Discogs' API.</p>
     <p></p>
-    <p class="masthead-subheading font-weight-light mb-0">Organize your own album collection by adding more details, cover art, artist profile and picture, and more.</p>
+    <p class="masthead-subheading font-weight-light mb-0">Every imported album contains:
+      <ul class="list-group">
+        <li class="list-group-item">Cover art</li>
+        <li class="list-group-item">Embedded videos</li>
+        <li class="list-group-item">Track listing</li>
+        <li class="list-group-item">Genres</li>
+        <li class="list-group-item">Artists</li>
+        <li class="list-group-item">Associated labels and releases/reprints</li>
+      </ul>
+    </p>
+    <%= link_to 'Get started...', {controller: "import", action: "index"}, class: "btn btn-md btn-secondary m-2" %>
   </div>
 </header>

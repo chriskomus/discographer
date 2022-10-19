@@ -16,7 +16,7 @@ class TestsController < ApplicationController
     app_secret = ENV["DISCOGS_API_SECRET"]
     callback = ENV["CALLBACK_URI"]
 
-    request_data = @discogs.get_request_token(app_key, app_secret, callback)
+    request_data = @discogs.get_request_token('rZrsuCgpGSKSoEaeShFG', 'oTOgyQQCnwttQSoqqcvycWZJbCassNkv', 'http://127.0.0.1:3000/tests/callback')
 
     session[:request_token] = request_data[:request_token]
 

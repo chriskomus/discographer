@@ -3,7 +3,12 @@
 
 
 <% if @discogs.authenticated? %>
-  authenticated
+  Discogs API has been authenticated.
+  <ul>
+    <li>To import an album, artist, or label: Create a new album, artist, or label and save it with the associated discogs id, which can be found in the url on the discogs website. (ie: https://www.discogs.com/release/<strong>3336</strong>). Click 'Import from Discogs' after it has been created. When importing an album, all associated tracks, videos, artists, genres, labels and releases will be imported as well.</li>
+    <li>To import all albums from a label or artist: Either create or navigate to either the label or artist page. Click 'Import all albums from this label'. This can take awhile and tends to work best for small labels or artists with only a few releases.</li>
+  </ul>
+
 <% else %>
   <ul>
     <li>Do <strong>not</strong> use localhost. Use <a href="http://127.0.0.1:3000/">127.0.0.1</a> or another valid address to prevent session issues.</li>

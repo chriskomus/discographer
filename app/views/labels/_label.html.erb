@@ -2,7 +2,6 @@
   <div class="tile-item mx-auto" data-bs-toggle="modal" data-bs-target="#modal<%= label.id %>">
     <%= link_to '<div class="tile-item-caption d-flex align-items-center justify-content-center h-100 w-100"><div class="tile-item-caption-content text-center text-white"><i class="fa-sharp fa-solid fa-eye"></i></div></div>'.html_safe, label %>
     <h3><%= label.name %></h3>
-    <p><%= truncate(label.profile, length: 100) %></p>
     <% unless label.imageuri.blank? %>
       <img class="img-fluid" src="<%= label.imageuri %>" alt="<%= label.name %>"/>
     <% end %>
