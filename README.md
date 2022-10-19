@@ -22,3 +22,9 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+# Config
+
+Store env variables in: config/application.yml
+
+Add to .gitignore

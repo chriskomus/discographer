@@ -5,14 +5,15 @@
     <% unless @artist.imageuri.blank? %>
       <div class="col">
         <div class="card">
-          <img class="card-img-top" src="<%= @artist.imageuri %>" alt="<%= @artist.title %>">
+          <img class="card-img-top" src="<%= @artist.imageuri %>" alt="<%= @artist.name %>">
         </div>
       </div>
     <% end %>
     <div class="col">
       <p><%= @artist.profile %></p>
       <a href="https://www.discogs.com/artist/<%= @artist.discogs_id %>" class="btn btn-xs btn-secondary" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i>
-        Discogs</a>
+        View on Discogs</a>
+      <%= link_to '<i class="fa-solid fa-cloud-arrow-down"></i> Import from Discogs'.html_safe, {controller: "import", action: "import_artist_info", artist_id: @artist.id}, class: "btn btn-md btn-secondary m-2" %>
     </div>
   </div>
 </div>
@@ -38,7 +39,9 @@
 </div>
 
 <div>
+  <%= link_to '<i class="fa-solid fa-cloud-arrow-down"></i> Import from Discogs'.html_safe, {controller: "import", action: "import_artist_info", artist_id: @artist.id}, class: "btn btn-md btn-secondary m-2" %>
   <%= link_to "Edit this artist", edit_artist_path(@artist), class: "btn btn-md btn-secondary m-2" %>
   <%= link_to "Back to artists", artists_path, class: "btn btn-md btn-secondary m-2" %>
   <%= button_to "Destroy this artist", @artist, method: :delete, class: "btn btn-md btn-danger m-2" %>
+  <%= link_to '<i class="fa-solid fa-cloud-arrow-down"></i> Import all albums from this artist'.html_safe, {controller: "import", action: "import_all_albums_from_artist", artist_id: @artist.id}, class: "btn btn-md btn-warning m-2" %>
 </div>

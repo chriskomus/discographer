@@ -5,14 +5,15 @@
     <% unless @label.imageuri.blank? %>
       <div class="col">
         <div class="card">
-          <img class="card-img-top" src="<%= @label.imageuri %>" alt="<%= @label.title %>">
+          <img class="card-img-top" src="<%= @label.imageuri %>" alt="<%= @label.name %>">
         </div>
       </div>
     <% end %>
     <div class="col">
       <p><%= @label.profile %></p>
       <a href="https://www.discogs.com/label/<%= @label.discogs_id %>" class="btn btn-xs btn-secondary" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i>
-        Discogs</a>
+        View on Discogs</a>
+      <%= link_to '<i class="fa-solid fa-cloud-arrow-down"></i> Import from Discogs'.html_safe, {controller: "import", action: "import_label_info", label_id: @label.id}, class: "btn btn-md btn-secondary m-2" %>
     </div>
   </div>
 </div>
@@ -39,7 +40,9 @@
 
 
 <div>
+  <%= link_to '<i class="fa-solid fa-cloud-arrow-down"></i> Import from Discogs'.html_safe, {controller: "import", action: "import_label_info", label_id: @label.id}, class: "btn btn-md btn-secondary m-2" %>
   <%= link_to "Edit this label", edit_label_path(@label), class: "btn btn-md btn-secondary m-2" %>
   <%= link_to "Back to labels", labels_path, class: "btn btn-md btn-secondary m-2" %>
   <%= button_to "Destroy this label", @label, method: :delete, class: "btn btn-md btn-danger m-2" %>
+  <%= link_to '<i class="fa-solid fa-cloud-arrow-down"></i> Import all albums from this label'.html_safe, {controller: "import", action: "import_all_albums_from_label", label_id: @label.id}, class: "btn btn-md btn-warning m-2" %>
 </div>

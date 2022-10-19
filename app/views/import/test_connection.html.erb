@@ -1,0 +1,37 @@
+<%= render 'layouts/heading', heading: 'Test Connection' %>
+<p class="text-center">If everything is working, sample artist information should display along with an image.</p>
+
+<% if @artist.present? %>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <% if @artist_image.blank? %>
+          If you don't see the image, you aren't authenticated with Discogs.
+          <a href="/import/authenticate">Authenticate Discogs.com account</a>
+        <% else %>
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="<%= @artist_image %>" alt="<%= @artist.name %>">
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col">
+        <h4 class="text-uppercase text-secondary mb-4">Artist Name: <%= @artist.name %></h4>
+        <p><strong>Profile: </strong><%= @artist.profile %></p>
+        <a href="https://www.discogs.com/artist/<%= @artist.id %>" class="btn btn-xs btn-secondary" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i>
+          View on Discogs</a>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <p><strong>There was a problem retrieving data from Discogs.</strong>
+          <a href="/import/authenticate">Authenticate Discogs.com account</a></p>
+      </div>
+    </div>
+  </div>
+<% end %>
