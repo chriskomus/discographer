@@ -48,7 +48,7 @@ Use the seed file to fill the database with the entire discography of an array o
 
 Store env variables in: config/application.yml
 
-Add to .gitignore
+Add config/application.yml to .gitignore
 
 # Gems
 
@@ -62,4 +62,8 @@ Active Record Session Store - for storing tokens: `gem 'activerecord-session_sto
 
 # Screenshots
 
-![Login Page](https://github.com/chriskomus/mvc-for-php-and-jquery/blob/main/public/images/sample/login.jpg?raw=true)
+![Album Page](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_1.jpg?raw=true)
+
+![Artist Listings](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_1.jpg?raw=true)
+
+![Artist Profile](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_1.jpg?raw=true)
