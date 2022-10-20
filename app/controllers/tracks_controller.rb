@@ -8,11 +8,12 @@ class TracksController < ApplicationController
       @album = Album.find_by_id(params[:album_id])
       if @album.present?
         @header = "Tracks: #{@album.title}"
-        @tracks = Track.where(album: @album)
+        @tracks = Track.where(album: @album).sort_by &:position
       end
     else
       @header = 'All Tracks'
-      @tracks = Track.all
+      # @tracks = Track.all
+      @tracks = Track.search(params[:search]).sort_by &:position
     end
   end
 

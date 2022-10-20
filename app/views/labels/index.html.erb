@@ -5,6 +5,17 @@
   <%= link_to '<i class="fa-solid fa-plus"></i> New Label'.html_safe, new_label_path, class: "btn btn-xl btn-outline-primary" %>
 </div>
 
+<!-- Search bar -->
+<div class="row justify-content-center mt-5">
+  Search by label name:
+  <div class="d-flex mb-0">
+    <%= form_with(url: '/labels', method: 'get', local: true, class: "input-group") do %>
+      <%= text_field_tag :search, "", class: 'form-control' %>
+      <%= submit_tag("Search", class: "btn btn-secondary") %>
+    <% end %>
+  </div>
+</div>
+
 <!-- Grid Items-->
 <div class="row justify-content-center mt-5" id="labels">
   <% @labels.each do |label| %>

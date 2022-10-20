@@ -27,7 +27,7 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :album %>
+    <%= form.label :album_id %>
     <%= form.collection_select(:album_id, Album.all, :id, :title, { :prompt => "Please Select...", :selected => params[:album_id] || video.album_id }, { :class => 'form-control' }) %>
   </div>
 

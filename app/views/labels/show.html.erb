@@ -23,7 +23,7 @@
 <!-- Grid Items-->
 <h4 class="text-center text-uppercase text-secondary mb-0">Artists</h4>
 <div class="row justify-content-center mt-5" id="genres">
-  <% @label.artists.each do |artist| %>
+  <% @label_artists.each do |artist| %>
     <%= render artist %>
   <% end %>
 </div>
@@ -33,7 +33,7 @@
 <!-- Grid Items-->
 <h4 class="text-center text-uppercase text-secondary mb-0">Albums</h4>
 <div class="row justify-content-center mt-5" id="albums">
-  <% @label.albums.each do |album| %>
+  <% @label_albums.each do |album| %>
     <%= render album %>
   <% end %>
 </div>

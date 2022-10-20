@@ -3,7 +3,8 @@ class AlbumsController < ApplicationController
 
   # GET /Albums or /Albums.json
   def index
-    @albums = Album.all
+    # @albums = Album.all
+    @albums = Album.search(params[:search]).sort_by &:title
   end
 
   # GET /Albums/1 or /Albums/1.json
@@ -13,6 +14,18 @@ class AlbumsController < ApplicationController
     @album.artists.each_with_index do |artist, i|
       @album_artists += artist.name
       @album_artists += i + 1 < @album.artists.count ? ', ' : ''
+    end
+
+    if @album.genres.present?
+      @album_genres = @album.genres.sort_by &:name
+    else
+      @album_genres = []
+    end
+
+    if @album.tracks.present?
+      @album_tracks = @album.tracks.sort_by &:position
+    else
+      @album_tracks = []
     end
   end
 
@@ -44,7 +57,6 @@ class AlbumsController < ApplicationController
   # PATCH/PUT /Albums/1 or /Albums/1.json
   def update
 
-
     respond_to do |format|
       if @album.update(album_params)
         format.html { redirect_to album_url(@album), notice: "Album was successfully updated." }
@@ -75,7 +87,7 @@ class AlbumsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def album_params
-    params.require(:album).permit(:id, :year, :title, :country, :notes, :imageuri, :discogs_id, :artist_ids => [], :genre_ids => [])
+    params.require(:album).permit(:id, :year, :title, :country, :notes, :imageuri, :discogs_id, :search, :artist_ids => [], :genre_ids => [])
   end
 
 end

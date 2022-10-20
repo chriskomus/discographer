@@ -40,9 +40,9 @@
           <% end %>
         </h5>
 
-        <h4>Genre<%= @album.releases.count > 1 ? "s" : "" %>:</h4>
+        <h4>Genre<%= @album.genres.count > 1 ? "s" : "" %>:</h4>
         <h5>
-          <% @album.genres.each do |genre| %>
+          <% @album_genres.each do |genre| %>
             <span class="badge rounded-pill bg-light text-dark"><%= link_to genre.name, genre %></span>
           <% end %>
         </h5>
@@ -69,7 +69,7 @@
           </tr>
           </thead>
           <tbody>
-          <%= render @album.tracks %>
+          <%= render @album_tracks %>
           </tbody>
         </table>
         <%= link_to '<i class="fa-solid fa-pencil"></i>'.html_safe, tracks_path(:album_id => @album.id), class: "btn btn-xs btn-primary mb-2" %>

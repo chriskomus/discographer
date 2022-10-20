@@ -514,8 +514,9 @@ class DiscogsService
     Album.destroy_all
     Genre.destroy_all
     Video.destroy_all
-    # Track.destroy_all
-    #
+    Release.destroy_all
+    Track.destroy_all
+
     @log.info "Database has been cleared."
 
     # Reset IDs
@@ -525,7 +526,8 @@ class DiscogsService
       ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'albums'")
       ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'genres'")
       ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'videos'")
-      # ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'tracks'")
+      ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'tracks'")
+      ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'releases'")
       @log.info "Table Primary Key IDs have been reset."
     end
   end

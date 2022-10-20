@@ -19,12 +19,12 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :artist %> (Shift click to select multiple)
+    <%= form.label :artist_ids %> (Shift click to select multiple)
     <%= form.collection_select(:artist_ids, Artist.all, :id, :name, {:prompt => "Please Select..."}, {:multiple => true, :class=>'form-control'}) %>
   </div>
 
   <div class="form-group">
-    <%= form.label :genre %> (Shift click to select multiple)
+    <%= form.label :genre_ids %> (Shift click to select multiple)
     <%= form.collection_select(:genre_ids, Genre.all, :id, :name, {:prompt => "Please Select..."}, {:multiple => true, :class=>'form-control'}) %>
   </div>
 
