@@ -48,7 +48,7 @@ Use the seed file to fill the database with the entire discography of an array o
 
 Store env variables in: config/application.yml
 
-Add to .gitignore
+Add config/application.yml to .gitignore
 
 # Gems
 
