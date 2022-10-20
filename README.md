@@ -82,10 +82,15 @@ Contains all albums, with search box.
 
 ![Album Listings](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_4.jpg?raw=true)
 
+## Label Profile
+Contains all albums and artists associated with a label.
+
+![Label Profile](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_5.jpg?raw=true)
+
 ## Album Releases
 An album may have been released multiple times or on multiple labels. This page shows all releases and their catalog number.
 
-![Album Releases](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_5.jpg?raw=true)
+![Album Releases](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_7.jpg?raw=true)
 
 
 ## Genre Listings
