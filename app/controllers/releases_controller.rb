@@ -12,7 +12,6 @@ class ReleasesController < ApplicationController
       end
     else
       @header = 'Releases'
-      # @releases = Release.all
       @releases = Release.search(params[:search]).sort_by &:catno
     end
   end
