@@ -62,8 +62,8 @@ Active Record Session Store - for storing tokens: `gem 'activerecord-session_sto
 
 # Screenshots
 
-![Album Page](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_1.jpg?raw=true)
+![Album Page](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_3.jpg?raw=true)
 
 ![Artist Listings](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_1.jpg?raw=true)
 
-![Artist Profile](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_1.jpg?raw=true)
+![Artist Profile](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_2.jpg?raw=true)
