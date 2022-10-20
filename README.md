@@ -85,10 +85,10 @@ Contains all albums, with search box.
 ## Album Releases
 An album may have been released multiple times or on multiple labels. This page shows all releases and their catalog number.
 
-![Album Releases](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_6.jpg?raw=true)
+![Album Releases](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_5.jpg?raw=true)
 
 
 ## Genre Listings
 Contains a list of all genres. Click a genre to see all albums associated with that genre.
 
-![Genre Listings](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_5.jpg?raw=true)
+![Genre Listings](https://github.com/chriskomus/discographer/blob/main/app/assets/images/readme_6.jpg?raw=true)
