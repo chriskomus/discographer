@@ -9,6 +9,7 @@ class AlbumsController < ApplicationController
 
   # GET /Albums/1 or /Albums/1.json
   def show
+
     # Album artists as string
     @album_artists = ''
     @album.artists.each_with_index do |artist, i|

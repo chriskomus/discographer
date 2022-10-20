@@ -3,7 +3,6 @@ class LabelsController < ApplicationController
 
   # GET /labels or /labels.json
   def index
-    # @labels = Label.all
     @labels = Label.search(params[:search]).sort_by &:name
   end
 
