@@ -2,8 +2,6 @@
 
 Import Data from the Discogs API into a Database using Ruby on Rails.
 
-Uses [Discogs Wrapper for Ruby on Rails](https://github.com/buntine/discogs) to authenticate and interact with the Discogs API.
-
 # Features
 * Import an artist or record label's entire discography from Discogs' API with one click.
 * Import individual albums from Discogs.
@@ -52,11 +50,11 @@ Add config/application.yml to .gitignore
 
 # Gems
 
+Discogs Wrapper - for interacting with the Discogs API: `gem "discogs-wrapper"`
+
 Bootstrap: `gem 'bootstrap'`
 
 Figaro - for setting environment variables: `gem "figaro"`
-
-Discogs Wrapper - for interacting with the Discogs API: `gem "discogs-wrapper"`
 
 Active Record Session Store - for storing tokens: `gem 'activerecord-session_store'`
 
