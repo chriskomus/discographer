@@ -27,6 +27,19 @@
   </div>
 <% end %>
 
+<!-- Search bar -->
+<% unless params[:album_id].present? %>
+  <div class="row justify-content-center mt-5">
+    Search by track title:
+    <div class="d-flex mb-0">
+      <%= form_with(url: '/tracks', method: 'get', local: true, class: "input-group") do %>
+        <%= text_field_tag :search, "", class: 'form-control' %>
+        <%= submit_tag("Search", class: "btn btn-secondary") %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <!-- Add New Button-->
 <div class="text-center mt-4">
   <% if @album.present? %>

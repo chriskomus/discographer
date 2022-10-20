@@ -8,12 +8,11 @@ class VideosController < ApplicationController
       @album = Album.find_by_id(params[:album_id])
       if @album.present?
         @header = "Videos: #{@album.title}"
-        @videos = Video.where(album: @album)
+        @videos = Video.where(album: @album).sort_by &:title
       end
     else
       @header = 'Select an album to see videos'
-      @videos = Video.all
-      @albums = Album.all
+      @albums = Album.all.sort_by &:title
     end
   end
 

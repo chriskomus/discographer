@@ -4,25 +4,16 @@
   <%= link_to '<i class="fa-solid fa-plus"></i> New Album'.html_safe, new_album_path, class: "btn btn-xl btn-outline-primary" %>
 </div>
 
-<%= form_with(url: '/albums', method: 'get', local: true) do %>
-  <div class="form-group">
-    <%= text_field_tag(:search) %>
+<!-- Search bar -->
+<div class="row justify-content-center mt-5">
+  Search by album title:
+  <div class="d-flex mb-0">
+  <%= form_with(url: '/albums', method: 'get', local: true, class: "input-group") do %>
+      <%= text_field_tag :search, "", class: 'form-control' %>
+      <%= submit_tag("Search", class: "btn btn-secondary") %>
+  <% end %>
   </div>
-  <%= submit_tag("Search", class: "btn btn-md btn-secondary mt-2") %>
-<% end %>
-
-<%#= form_tag albums_path, :method => "get" do %>
-<!--  <div class="form-group">-->
-    <%#= form.label :search, style: "display: block" %>
-    <%#= form.text_field :search, params[:search], class: "form-control" %>
-    <%#= form.label(:search, "Search by artist:") %>
-    <%#= text_field_tab :search, params[:search] %>
-<!--  </div>-->
-<!--  <div>-->
-    <%#= form.submit 'Submit', class: "btn btn-md btn-secondary mt-2", :name => nil %>
-<!--  </div>-->
-  <%#= submit_tag("Search", :name => nil) %>
-<%# end %>
+</div>
 
 <!-- Grid Items-->
 <div class="row justify-content-center mt-5" id="albums">

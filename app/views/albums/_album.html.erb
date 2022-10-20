@@ -2,18 +2,16 @@
   <div class="tile-item mx-auto" data-bs-toggle="modal" data-bs-target="#modal<%= album.id %>">
     <%= link_to '<div class="tile-item-caption d-flex align-items-center justify-content-center h-100 w-100"><div class="tile-item-caption-content text-center text-white"><i class="fa-sharp fa-solid fa-eye"></i></div></div>'.html_safe, album %>
     <h5><span class="badge rounded-pill bg-light text-dark"><%= album.title %></span></h5>
-    <h5>
-      <% album.artists.each do |artist| %>
-        <span class="badge rounded-pill bg-light text-dark"><%= artist.name %></span>
-      <% end %>
-    </h5>
+    <% album.artists.each do |artist| %>
+      <h5><span class="badge rounded-pill bg-light text-dark"><%= artist.name %></span></h5>
+    <% end %>
     <p>
       <% album.releases.each do |release| %>
         <span class="badge rounded-pill bg-light text-dark"><%= release.catno %></span>
       <% end %>
     </p>
     <% unless album.imageuri.blank? %>
-      <img class="img-fluid" src="<%= album.imageuri %>" alt="<%= album.title %>"/>
+      <img class="img-fluid" src="<%= album.imageuri %>" alt="<%= album.title %>">
     <% end %>
   </div>
 </div>

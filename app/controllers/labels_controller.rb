@@ -3,11 +3,24 @@ class LabelsController < ApplicationController
 
   # GET /labels or /labels.json
   def index
-    @labels = Label.all
+    # @labels = Label.all
+    @labels = Label.search(params[:search]).sort_by &:name
   end
 
   # GET /labels/1 or /labels/1.json
   def show
+    if @label.artists.present?
+      @label_artists = @label.artists.sort_by &:name
+    else
+      @label_artists = []
+    end
+
+    if @label.albums.present?
+      @label_albums = @label.albums.sort_by &:title
+    else
+      @label_albums = []
+    end
+
   end
 
   # GET /labels/new
@@ -58,13 +71,14 @@ class LabelsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_label
-      @label = Label.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def label_params
-      params.require(:label).permit(:id, :name, :profile, :imageuri, :discogs_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_label
+    @label = Label.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def label_params
+    params.require(:label).permit(:id, :name, :profile, :imageuri, :discogs_id)
+  end
 end

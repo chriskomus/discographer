@@ -11,6 +11,5 @@
   <td><%= track.duration.blank? ? "" : "#{track.duration}" %></td>
   <td>
     <%= link_to '<i class="fa-solid fa-pencil"></i>'.html_safe, edit_track_path(track), class: "badge-pill badge badge-secondary" %>
-    <%= link_to '<i class="fa-solid fa-delete-left"></i>'.html_safe, @track, method: :delete, class: "badge-pill badge badge-danger" %>
   </td>
 </tr>

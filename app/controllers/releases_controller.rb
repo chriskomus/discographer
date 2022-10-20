@@ -8,11 +8,12 @@ class ReleasesController < ApplicationController
       @album = Album.find_by_id(params[:album_id])
       if @album.present?
         @header = "Releases: #{@album.title}"
-        @releases = Release.where(album: @album)
+        @releases = Release.where(album: @album).sort_by &:catno
       end
     else
       @header = 'Releases'
-      @releases = Release.all
+      # @releases = Release.all
+      @releases = Release.search(params[:search]).sort_by &:catno
     end
   end
 

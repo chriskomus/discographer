@@ -4,4 +4,12 @@
 class Release < ApplicationRecord
   belongs_to :label
   belongs_to :album
+
+  def self.search(search)
+    if search
+      where(["catno LIKE ?","%#{search}%"])
+    else
+      all
+    end
+  end
 end

@@ -7,13 +7,13 @@ user_token = "UVHUjZHYJrClanUtJWdzVCUHXvPdDpwppwPgSyWJ"
 
 # Seed data
 artists = []
-labels = [467138]
+labels = [467138, 3336]
 
 wrapper = Discogs::Wrapper.new(app_name, user_token: user_token)
 discogs_service = DiscogsService.new(wrapper)
 
-# discogs_service.clear_database(true)
-#
+discogs_service.clear_database(true)
+
 discogs_service.seed_database(artists, labels)
 discogs_service.log_generated_count
 discogs_service.log_database_count

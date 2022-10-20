@@ -3,11 +3,23 @@ class ArtistsController < ApplicationController
 
   # GET /artists or /artists.json
   def index
-    @artists = Artist.all
+    # @artists = Artist.all
+    @artists = Artist.search(params[:search]).sort_by &:name
   end
 
   # GET /artists/1 or /artists/1.json
   def show
+    if @artist.albums.present?
+      @artist_albums = @artist.albums.sort_by &:year
+    else
+      @artist_albums = []
+    end
+
+    if @artist.labels.present?
+      @artist_labels = @artist.labels.sort_by &:name
+    else
+      @artist_labels = []
+    end
   end
 
   # GET /artists/new
@@ -58,13 +70,14 @@ class ArtistsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_artist
-      @artist = Artist.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def artist_params
-      params.require(:artist).permit(:name, :id, :profile, :imageuri, :discogs_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_artist
+    @artist = Artist.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def artist_params
+    params.require(:artist).permit(:name, :id, :profile, :imageuri, :discogs_id)
+  end
 end

@@ -4,7 +4,7 @@
     <h3><%= artist.name %></h3>
     <p><%= truncate(artist.profile, length: 100) %></p>
     <% unless artist.imageuri.blank? %>
-      <img class="img-fluid" src="<%= artist.imageuri %>" alt="<%= artist.name %>"/>
+      <img class="img-fluid" src="<%= artist.imageuri %>" alt="<%= artist.name %>">
     <% end %>
   </div>
 </div>

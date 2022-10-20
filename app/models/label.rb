@@ -7,4 +7,12 @@ class Label < ApplicationRecord
   has_many :releases
 
   validates :name, presence: true
+
+  def self.search(search)
+    if search
+      where(["name LIKE ?","%#{search}%"])
+    else
+      all
+    end
+  end
 end
